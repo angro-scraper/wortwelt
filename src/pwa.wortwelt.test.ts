@@ -14,6 +14,13 @@ describe('WortWelt PWA i native osnova', () => {
     expect(vite).toContain('mp3');
   });
 
+  it('preusmerava javne privacy i support rute na PWA ulaz na Renderu', () => {
+    const render = read('render.yaml');
+    expect(render).toContain('type: rewrite');
+    expect(render).toContain('source: /*');
+    expect(render).toContain('destination: /index.html');
+  });
+
   it('native omoti koriste isti lokalni dist, bez udaljenog WebView URL-a', () => {
     const capacitor = read('capacitor.config.ts');
     expect(capacitor).toContain("appId: 'de.wortwelt.app'");
