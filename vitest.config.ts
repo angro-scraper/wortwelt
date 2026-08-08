@@ -13,7 +13,8 @@ export default defineConfig({
       'src/domain/wortweltMvp.test.ts',
       'src/services/wortweltAudio.test.ts',
       'src/pwa.wortwelt.test.ts',
-      'src/components/TracePad.test.ts'
+      'src/components/TracePad.test.ts',
+      'src/codemagic.wortwelt.test.ts'
     ]
   }
 });
