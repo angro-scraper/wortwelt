@@ -100,6 +100,10 @@ describe('WortWelt početni tok', () => {
 
   it('drži preostale glavne Slovolov tokove dostupnim iz WortWelt početne strane', () => {
     render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: /Meine nächste Lektion/i }));
+    expect(screen.getByRole('heading', { name: 'Meine nächste Lektion' })).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
     fireEvent.click(screen.getByRole('button', { name: /SchreibenMit dem Finger/i }));
     expect(screen.getByRole('heading', { name: 'Schreibe A' })).toBeVisible();
 
