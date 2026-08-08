@@ -31,6 +31,7 @@ workflows:
             --workspace "$CM_BUILD_DIR/$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME"
     artifacts:
-      - ios/App/build/ios/ipa/*.ipa
+      # xcode-project build-ipa exports relative to the repository root.
+      - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM

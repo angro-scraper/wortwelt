@@ -9,6 +9,7 @@ describe('WortWelt Codemagic iOS izdanje', () => {
     expect(config).toContain('ios-app-store:');
     expect(config).toContain('distribution_type: app_store');
     expect(config).toContain('bundle_identifier: de.wortwelt.app');
+    expect(config).toContain('build/ios/ipa/*.ipa');
     expect(config).not.toMatch(/(password|secret|token|private[_-]?key)\s*:/i);
   });
 });
