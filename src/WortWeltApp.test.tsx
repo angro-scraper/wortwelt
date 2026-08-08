@@ -23,8 +23,23 @@ describe('WortWelt početni tok', () => {
     fireEvent.click(screen.getByRole('button', { name: 'A a' }));
     fireEvent.click(screen.getByRole('button', { name: 'Bild auswählen: Affe' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent('Prima');
+    expect(screen.getByRole('status')).toHaveTextContent('Bravo');
     expect(screen.getByText('⭐ 1')).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Buchstabe B b' })).toBeVisible();
+    expect(screen.getAllByText(/Als Nächstes: B/)).toHaveLength(2);
+  });
+
+  it('zadržava isti tok nagrade i sledećeg koraka za brojanje i bojanku', () => {
+    render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: /Zählen bis 100/i }));
+    fireEvent.click(screen.getAllByRole('button', { name: '0' })[1]);
+    expect(screen.getByRole('status')).toHaveTextContent('Bravo');
+    expect(screen.getByText('⭐ 1')).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    fireEvent.click(screen.getByRole('button', { name: /Malwelt/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Bild speichern/i }));
+    expect(screen.getByText(/Bravo! Dein Bild ist gespeichert. Als Nächstes: B/)).toBeVisible();
   });
 
   it('omogućava nemačko brojanje, priču i roditeljsku zaštitu', () => {
@@ -81,5 +96,20 @@ describe('WortWelt početni tok', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
     fireEvent.click(screen.getByRole('button', { name: /Entdeckerland/i }));
     expect(screen.getByText('Ein Wort aus Deutschland')).toBeVisible();
+  });
+
+  it('drži preostale glavne Slovolov tokove dostupnim iz WortWelt početne strane', () => {
+    render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: /SchreibenMit dem Finger/i }));
+    expect(screen.getByRole('heading', { name: 'Schreibe A' })).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    fireEvent.click(screen.getByRole('button', { name: /SpieleHören, Memory/i }));
+    expect(screen.getByRole('heading', { name: 'Spiele' })).toBeVisible();
+    expect(screen.getByRole('button', { name: /Memory/i })).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    fireEvent.click(screen.getByRole('button', { name: /Mein FortschrittSterne/i }));
+    expect(screen.getByRole('heading', { name: 'Mein Fortschritt' })).toBeVisible();
   });
 });

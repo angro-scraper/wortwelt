@@ -33,7 +33,7 @@ describe('WortWelt PWA i native osnova', () => {
       (total, item) => total + (item.isDirectory() ? count(resolve(path, item.name)) : item.name.endsWith('.mp3') ? 1 : 0), 0
     );
     // 30 slova + 91 reč + 101 broj + povratne poruke + 12 priča sa rečenicama.
-    expect(count(audioRoot)).toBe(272);
+    expect(count(audioRoot)).toBe(273);
     const audioService = read('src/services/wortweltAudio.ts');
     expect(audioService).not.toContain('speechSynthesis');
     expect(audioService).not.toContain('SpeechSynthesis');

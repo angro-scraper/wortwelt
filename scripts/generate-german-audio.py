@@ -54,6 +54,7 @@ async def main() -> None:
         word = number_word(value)
         await save(f"numbers/{value}", word)
     await save("feedback/bravo", "Prima! Das hast du toll gemacht.")
+    await save("feedback/bravo-next-letter", "Bravo! Du hast einen Stern. Jetzt kommt der nächste Buchstabe.")
     await save("feedback/try-again", "Fast. Versuche es noch einmal.")
 
     stories = [
