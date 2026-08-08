@@ -130,4 +130,14 @@ describe('WortWelt početni tok', () => {
     fireEvent.click(screen.getByRole('button', { name: /Mein FortschrittSterne/i }));
     expect(screen.getByRole('heading', { name: 'Mein Fortschritt' })).toBeVisible();
   });
+
+  it('prikazuje javnu privacy stranicu sa lokalnim čuvanjem podataka i roditeljskim mikrofonom', () => {
+    window.history.pushState({}, '', '/privacy');
+    render(<WortWeltApp />);
+
+    expect(screen.getByRole('heading', { name: 'Datenschutz' })).toBeVisible();
+    expect(screen.getByText(/überträgt diese Daten nicht an einen Server/i)).toBeVisible();
+    expect(screen.getByText(/werden nicht hochgeladen/i)).toBeVisible();
+    window.history.replaceState({}, '', '/');
+  });
 });

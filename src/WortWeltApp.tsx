@@ -104,7 +104,39 @@ function ParentScreen({ progress, update, onBack }: { progress: SavedProgress; u
   </div>;
 }
 
+function PublicInfoPage({ page }: { page: 'privacy' | 'support' }) {
+  const privacy = page === 'privacy';
+  return <div className="wortwelt-app public-info-page">
+    <header className="screen-header wortwelt-header">
+      <div className="wortwelt-mascot" aria-hidden="true">🦊</div>
+      <div><small>WORTWELT</small><h1>{privacy ? 'Datenschutz' : 'Hilfe & Support'}</h1></div>
+      <span className="star-pill" aria-hidden="true">⭐</span>
+    </header>
+    <main className="wortwelt-panel public-info-content">
+      {privacy ? <>
+        <h2>Datenschutz auf einen Blick</h2>
+        <p>WortWelt ist eine Lern-App für Kinder. Die App erstellt kein Konto, zeigt keine Werbung und verwendet kein Tracking.</p>
+        <h2>Lokale Daten</h2>
+        <p>Lernfortschritt, Kindprofile und gespeicherte Bilder bleiben ausschließlich auf dem verwendeten Gerät. WortWelt überträgt diese Daten nicht an einen Server.</p>
+        <h2>Mikrofon</h2>
+        <p>Eine erwachsene Person kann im Elternbereich eine lokale Sprechübung aktivieren. Erst dann fragt das Gerät nach Mikrofonzugriff. Aufnahmen bleiben auf dem Gerät und werden nicht hochgeladen.</p>
+        <h2>Kontakt</h2>
+        <p>Für Hilfe mit der App öffne bitte den Elternbereich in WortWelt. Dort findest du alle Einstellungen für Ton, Sprache und lokale Daten.</p>
+      </> : <>
+        <h2>Hilfe mit WortWelt</h2>
+        <p>WortWelt funktioniert ohne Konto und speichert den Lernfortschritt direkt auf dem Gerät.</p>
+        <p>Für Einstellungen zu Ton, Sprachübung, Kontrast und lokalem Fortschritt öffne in der App den Bereich „Für Eltern”.</p>
+        <p>Datenschutzinformationen findest du auf der <a href="/privacy">Datenschutzseite</a>.</p>
+      </>}
+      <a className="primary public-info-link" href="/">Zur WortWelt-App</a>
+    </main>
+  </div>;
+}
+
 export function WortWeltApp() {
+  const publicPath = window.location.pathname.replace(/\/+$/, '') || '/';
+  if (publicPath === '/privacy') return <PublicInfoPage page="privacy" />;
+  if (publicPath === '/support') return <PublicInfoPage page="support" />;
   const [screen, setScreen] = useState<Screen>('home');
   const [selected, setSelected] = useState<GermanLetter>(germanLetters[0]);
   const [progress, setProgress] = useState<SavedProgress>(readProgress);

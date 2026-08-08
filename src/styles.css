@@ -742,6 +742,12 @@ body {
 .accessibility-section h2, .privacy-section h2, .parent-language-section h2 { font-family: var(--font-family); font-weight: 900; }
 .accessibility-section label, .privacy-section label { min-height: 46px; display: flex; align-items: center; justify-content: space-between; font-weight: 800; }
 .privacy-section p, .parent-language-section p { margin: 0 0 8px; color: #69738c; font-size: .78rem; font-weight: 700; }
+
+.public-info-page { min-height: 100vh; }
+.public-info-content { max-width: 760px; margin: 0 auto; line-height: 1.6; }
+.public-info-content h2 { margin-top: 1.35rem; }
+.public-info-content p { color: #4b556b; font-weight: 700; }
+.public-info-link { display: inline-flex; margin-top: 1rem; text-decoration: none; }
 .parent-language-section select { width: 100%; min-height: 48px; border: 2px solid #dce2f0; border-radius: 14px; padding: 0 12px; background: var(--surface); color: inherit; font-weight: 900; }
 
 .content-locked {
