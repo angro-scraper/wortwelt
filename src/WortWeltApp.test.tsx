@@ -30,7 +30,7 @@ describe('WortWelt početni tok', () => {
   it('omogućava nemačko brojanje, priču i roditeljsku zaštitu', () => {
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /Zählen/i }));
-    expect(screen.getByRole('heading', { name: 'Zählen' })).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Zählen bis 100' })).toBeVisible();
     expect(screen.getByText(/Wie viele leer/i)).toBeVisible();
 
     fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
@@ -43,5 +43,43 @@ describe('WortWelt početni tok', () => {
     fireEvent.change(screen.getByLabelText('4 + 3 ='), { target: { value: '7' } });
     fireEvent.click(screen.getByRole('button', { name: /Elternbereich öffnen/i }));
     expect(screen.getByText('Datenschutz zuerst')).toBeVisible();
+  });
+
+  it('otvara nemačke ekvivalente za dnevni izazov, bojanku, kviz i kreativnu priču', () => {
+    render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: /Tägliche Herausforderung/i }));
+    expect(screen.getByText('Buchstaben-Stern')).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    fireEvent.click(screen.getByRole('button', { name: /Malwelt/i }));
+    expect(screen.getByLabelText(/Malfläche für A/i)).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    fireEvent.click(screen.getByRole('button', { name: /Quiz/i }));
+    expect(screen.getByRole('heading', { name: 'Was siehst du?' })).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    fireEvent.click(screen.getByRole('button', { name: /Abenteuer/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Ideenwerkstatt/i }));
+    expect(screen.getByRole('heading', { name: 'Meine Geschichte' })).toBeVisible();
+  });
+
+  it('ima bezbedno dostupne avanturističke module za govor, porodicu, logiku i kulturu', () => {
+    render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: /Abenteuer/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Sprechwerkstatt/i }));
+    expect(screen.getByText(/lokale Sprechübung/i)).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    fireEvent.click(screen.getByRole('button', { name: /Familien-Missionen/i }));
+    expect(screen.getByText('Küchen-Zählen')).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    fireEvent.click(screen.getByRole('button', { name: /Denk-Labor/i }));
+    expect(screen.getByText('2 + 3 = ?')).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    fireEvent.click(screen.getByRole('button', { name: /Entdeckerland/i }));
+    expect(screen.getByText('Ein Wort aus Deutschland')).toBeVisible();
   });
 });

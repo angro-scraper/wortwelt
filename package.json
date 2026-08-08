@@ -12,7 +12,7 @@
     "cap:sync": "npm run build && cap sync",
     "android": "npm run cap:sync && cap open android",
     "ios": "npm run cap:sync && cap open ios",
-    "audio:generate": "C:\\PomagAI-Codex\\.venv\\Scripts\\python.exe scripts/generate-german-audio.py"
+    "audio:generate": "powershell.exe -NoProfile -Command \"& 'C:\\PomagAI-Codex\\.venv\\Scripts\\python.exe' 'scripts\\generate-german-audio.py'\""
   },
   "dependencies": {
     "@capacitor/core": "^7.4.4",

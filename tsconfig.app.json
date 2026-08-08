@@ -22,6 +22,8 @@
     "src/main.tsx",
     "src/WortWeltApp.tsx",
     "src/components/TracePad.tsx",
+    "src/components/ColoringPad.tsx",
+    "src/components/VoicePractice.tsx",
     "src/domain/germanLetters.ts",
     "src/domain/wortweltMvp.ts",
     "src/services/wortweltAudio.ts"

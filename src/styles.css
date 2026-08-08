@@ -807,10 +807,13 @@ body {
 .family-section > small { color: #69738c; font-weight: 800; }
 
 .app.large-ui-text { font-size: 112%; }
+.wortwelt-app.large-ui-text { font-size: 112%; }
 .app.dyslexia-friendly { font-family: Verdana, Tahoma, sans-serif; letter-spacing: .025em; word-spacing: .06em; }
 .app.high-contrast { --ink: #080b14; --muted: #384152; --purple: #3527c7; }
+.wortwelt-app.high-contrast { --purple: #3527c7; color: #080b14; background: #fff; }
 .app.high-contrast button:focus-visible { outline: 4px solid #111827; outline-offset: 3px; }
 .app.reduced-motion *, .app.reduced-motion *::before, .app.reduced-motion *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+.wortwelt-app.reduced-motion *, .wortwelt-app.reduced-motion *::before, .wortwelt-app.reduced-motion *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 
 @media (max-width: 540px) {
   .adaptive-hero { grid-template-columns: 72px 1fr; padding: 14px; }
