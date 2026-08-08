@@ -21,6 +21,13 @@ describe('WortWelt PWA i native osnova', () => {
     expect(render).toContain('destination: /index.html');
   });
 
+  it('isporučuje fizičku stranicu privatnosti i za validatore koji koriste HEAD', () => {
+    const privacy = read('static/privacy/index.html');
+    expect(privacy).toContain('<title>WortWelt Datenschutz</title>');
+    expect(privacy).toContain('keine Werbung');
+    expect(privacy).toContain('kein Tracking');
+  });
+
   it('native omoti koriste isti lokalni dist, bez udaljenog WebView URL-a', () => {
     const capacitor = read('capacitor.config.ts');
     expect(capacitor).toContain("appId: 'de.wortwelt.app'");
