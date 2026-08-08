@@ -31,3 +31,8 @@ Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
     globalCompositeOperation: 'source-over'
   }))
 });
+
+Object.defineProperty(HTMLCanvasElement.prototype, 'toDataURL', {
+  configurable: true,
+  value: vi.fn(() => 'data:image/png;base64,test-canvas')
+});

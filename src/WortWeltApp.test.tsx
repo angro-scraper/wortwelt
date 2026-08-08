@@ -29,6 +29,20 @@ describe('WortWelt početni tok', () => {
     expect(screen.getAllByText(/Als Nächstes: B/)).toHaveLength(2);
   });
 
+  it('pisanje daje jasnu Bravo potvrdu i nastavlja sa sledećim slovom i kada detetu treba pomoć', () => {
+    render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: /SchreibenMit dem Finger/i }));
+
+    const canvas = screen.getByLabelText('Schreibfläche für den Buchstaben A');
+    fireEvent.pointerDown(canvas, { clientX: 30, clientY: 30, pointerId: 1 });
+    fireEvent.pointerUp(canvas, { clientX: 30, clientY: 30, pointerId: 1 });
+    fireEvent.click(screen.getByRole('button', { name: /Fertig! Weiter mit B/i }));
+
+    expect(screen.getByRole('heading', { name: 'Schreibe B' })).toBeVisible();
+    expect(screen.getAllByRole('status').some((status) => status.textContent?.includes('Bravo! A ist geschafft. Als Nächstes: B.'))).toBe(true);
+    expect(screen.getByText('⭐ 1')).toBeVisible();
+  });
+
   it('zadržava isti tok nagrade i sledećeg koraka za brojanje i bojanku', () => {
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /Zählen bis 100/i }));

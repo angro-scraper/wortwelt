@@ -180,12 +180,13 @@ body {
 .instruction { margin: 4px 0 8px; text-align: center; color: #69738c; font-weight: 800; }
 .trace-wrap { flex: 1; min-height: 280px; position: relative; overflow: hidden; border-radius: 30px; background: white; box-shadow: inset 0 0 0 2px #e0e7ff, var(--shadow); touch-action: none; }
 .trace-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; z-index: 5; }
-.guide-letter { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -52%); color: #e4e4ff; -webkit-text-stroke: 0 transparent; font: 900 min(54vw, 24rem)/1 var(--font-family); opacity: .9; }
+.guide-letter { position: absolute; inset: 0; display: grid; place-items: center; padding: .05em 0 0; color: #e4e4ff; -webkit-text-stroke: 0 transparent; font: 900 min(54vw, 24rem)/.9 var(--font-family); opacity: .9; pointer-events: none; text-align: center; }
 .guide-line { position: absolute; left: 8%; right: 8%; border-top: 3px dashed #d7dfec; }
 .guide-line-top { top: 27%; }.guide-line-base { bottom: 23%; }
 .start-dot { position: absolute; z-index: 4; left: 30%; top: 25%; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: var(--green); color: white; font-weight: 900; box-shadow: 0 0 0 9px rgba(53,183,121,.18); }
 .clear-button { position: absolute; right: 14px; bottom: 14px; z-index: 7; }
 .small-button { border: 0; border-radius: 13px; background: #fff1f2; color: #e11d48; padding: 9px 13px; font-weight: 900; }
+.writing-next { flex: 0 0 auto; margin: 10px auto 0; }
 .celebrate { position: fixed; inset: 35% 10% auto; z-index: 20; padding: 28px; border-radius: 30px; background: white; color: var(--purple); text-align: center; font: 900 1.7rem var(--font-family); box-shadow: 0 20px 80px rgba(67,56,202,.3); animation: pop .35s ease-out; }
 @keyframes pop { from { transform: scale(.4) rotate(-8deg); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 

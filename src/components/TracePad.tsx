@@ -102,7 +102,7 @@ export function TracePad({
 
   const start = (event: React.PointerEvent<HTMLCanvasElement>) => {
     event.preventDefault();
-    event.currentTarget.setPointerCapture(event.pointerId);
+    event.currentTarget.setPointerCapture?.(event.pointerId);
     const point = position(event);
     pointsRef.current = [...pointsRef.current, point];
     setDrawing(true);
