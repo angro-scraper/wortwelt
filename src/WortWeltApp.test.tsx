@@ -93,13 +93,11 @@ describe('WortWelt početni tok', () => {
     expect(screen.getByRole('heading', { name: 'Meine Geschichte' })).toBeVisible();
   });
 
-  it('ima bezbedno dostupne avanturističke module za govor, porodicu, logiku i kulturu', () => {
+  it('ima bezbedno dostupne avanturističke module bez mikrofona', () => {
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /Abenteuer/i }));
-    fireEvent.click(screen.getByRole('button', { name: /Sprechwerkstatt/i }));
-    expect(screen.getByText(/lokale Sprechübung/i)).toBeVisible();
+    expect(screen.queryByRole('button', { name: /Sprechwerkstatt/i })).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
     fireEvent.click(screen.getByRole('button', { name: /Familien-Missionen/i }));
     expect(screen.getByText('Küchen-Zählen')).toBeVisible();
 
@@ -131,13 +129,13 @@ describe('WortWelt početni tok', () => {
     expect(screen.getByRole('heading', { name: 'Mein Fortschritt' })).toBeVisible();
   });
 
-  it('prikazuje javnu privacy stranicu sa lokalnim čuvanjem podataka i roditeljskim mikrofonom', () => {
+  it('prikazuje javnu privacy stranicu bez mikrofona i prenosa podataka', () => {
     window.history.pushState({}, '', '/privacy');
     render(<WortWeltApp />);
 
     expect(screen.getByRole('heading', { name: 'Datenschutz' })).toBeVisible();
     expect(screen.getByText(/überträgt diese Daten nicht an einen Server/i)).toBeVisible();
-    expect(screen.getByText(/werden nicht hochgeladen/i)).toBeVisible();
+    expect(screen.getByText(/kein Mikrofon/i)).toBeVisible();
     window.history.replaceState({}, '', '/');
   });
 });

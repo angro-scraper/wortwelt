@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { TracePad } from './components/TracePad';
 import { ColoringPad } from './components/ColoringPad';
-import { VoicePractice } from './components/VoicePractice';
 import { germanLetters, type GermanLetter, type GermanWord } from './domain/germanLetters';
 import {
   COUNTING_LESSONS,
@@ -13,7 +12,7 @@ import {
 } from './domain/wortweltMvp';
 import { playGermanAudio } from './services/wortweltAudio';
 
-type Screen = 'home' | 'alphabet' | 'lesson' | 'write' | 'games' | 'count' | 'read' | 'parent' | 'progress' | 'daily' | 'coloring' | 'quiz' | 'adventure' | 'creative' | 'voice' | 'family' | 'logic' | 'culture' | 'adaptive';
+type Screen = 'home' | 'alphabet' | 'lesson' | 'write' | 'games' | 'count' | 'read' | 'parent' | 'progress' | 'daily' | 'coloring' | 'quiz' | 'adventure' | 'creative' | 'family' | 'logic' | 'culture' | 'adaptive';
 type SavedProgress = {
   stars: number;
   learned: string[];
@@ -28,7 +27,6 @@ type SavedProgress = {
   largeText: boolean;
   highContrast: boolean;
   reducedMotion: boolean;
-  voiceEnabled: boolean;
 };
 
 const progressKey = 'wortwelt-progress-v2';
@@ -51,10 +49,9 @@ function readProgress(): SavedProgress {
       largeText: value.largeText ?? false,
       highContrast: value.highContrast ?? false,
       reducedMotion: value.reducedMotion ?? false
-      , voiceEnabled: value.voiceEnabled ?? false
     };
   } catch {
-    return { stars: 0, learned: [], gamesWon: 0, counted: [], storiesRead: [], profiles: ['Kind'], activeProfile: 0, soundEnabled: true, dailyWins: [], colorings: [], largeText: false, highContrast: false, reducedMotion: false, voiceEnabled: false };
+    return { stars: 0, learned: [], gamesWon: 0, counted: [], storiesRead: [], profiles: ['Kind'], activeProfile: 0, soundEnabled: true, dailyWins: [], colorings: [], largeText: false, highContrast: false, reducedMotion: false };
   }
 }
 
@@ -97,7 +94,7 @@ function ParentScreen({ progress, update, onBack }: { progress: SavedProgress; u
     <main className="parent-settings">
       <section className="wortwelt-panel"><h2>Datenschutz zuerst</h2><p>Keine Werbung, kein Konto, kein Mikrofon und kein Tracking. Der Lernfortschritt bleibt auf diesem Gerät.</p></section>
       <section className="wortwelt-panel"><h2>Kindprofil</h2><p>Aktiv: <strong>{activeName}</strong></p><div className="profile-chips">{progress.profiles.map((profile, index) => <button key={profile} className={index === progress.activeProfile ? 'active' : ''} onClick={() => update((current) => ({ ...current, activeProfile: index }))}>{profile}</button>)}</div><button className="secondary" onClick={() => update((current) => current.profiles.length >= 3 ? current : ({ ...current, profiles: [...current.profiles, `Kind ${current.profiles.length + 1}`] }))}>+ Profil hinzufügen</button></section>
-      <section className="wortwelt-panel"><h2>Ton und Sprache</h2><label className="setting-toggle"><span>Lokale deutsche Aufnahmen</span><input type="checkbox" checked={progress.soundEnabled} onChange={() => update((current) => ({ ...current, soundEnabled: !current.soundEnabled }))} /></label><label className="setting-toggle"><span>Lokale Sprechübung erlauben</span><input type="checkbox" checked={progress.voiceEnabled} onChange={() => update((current) => ({ ...current, voiceEnabled: !current.voiceEnabled }))} /></label><small>WortWelt verwendet ausschließlich mitgelieferte Audio-Dateien und keinen System-TTS. Eine Sprachaufnahme bleibt nur auf diesem Gerät.</small></section>
+      <section className="wortwelt-panel"><h2>Ton</h2><label className="setting-toggle"><span>Lokale deutsche Aufnahmen</span><input type="checkbox" checked={progress.soundEnabled} onChange={() => update((current) => ({ ...current, soundEnabled: !current.soundEnabled }))} /></label><small>WortWelt verwendet ausschließlich mitgelieferte Audio-Dateien und keinen System-TTS.</small></section>
       <section className="wortwelt-panel"><h2>Barrierearme Ansicht</h2><label className="setting-toggle"><span>Größere Schrift</span><input type="checkbox" checked={progress.largeText} onChange={() => update((current) => ({ ...current, largeText: !current.largeText }))} /></label><label className="setting-toggle"><span>Hoher Kontrast</span><input type="checkbox" checked={progress.highContrast} onChange={() => update((current) => ({ ...current, highContrast: !current.highContrast }))} /></label><label className="setting-toggle"><span>Weniger Bewegung</span><input type="checkbox" checked={progress.reducedMotion} onChange={() => update((current) => ({ ...current, reducedMotion: !current.reducedMotion }))} /></label></section>
       <section className="wortwelt-panel"><h2>Fortschritt von {activeName}</h2><p>{progress.learned.length} Buchstaben, {progress.counted.length} Zahlen, {progress.storiesRead.length} Geschichten und {progress.colorings.length} Bilder abgeschlossen.</p><button className="secondary" onClick={() => update((current) => ({ ...current, stars: 0, learned: [], gamesWon: 0, counted: [], storiesRead: [], dailyWins: [], colorings: [] }))}>Lernfortschritt zurücksetzen</button></section>
     </main>
@@ -119,13 +116,13 @@ function PublicInfoPage({ page }: { page: 'privacy' | 'support' }) {
         <h2>Lokale Daten</h2>
         <p>Lernfortschritt, Kindprofile und gespeicherte Bilder bleiben ausschließlich auf dem verwendeten Gerät. WortWelt überträgt diese Daten nicht an einen Server.</p>
         <h2>Mikrofon</h2>
-        <p>Eine erwachsene Person kann im Elternbereich eine lokale Sprechübung aktivieren. Erst dann fragt das Gerät nach Mikrofonzugriff. Aufnahmen bleiben auf dem Gerät und werden nicht hochgeladen.</p>
+        <p>WortWelt verwendet kein Mikrofon und fordert keine Mikrofonberechtigung an.</p>
         <h2>Kontakt</h2>
         <p>Für Hilfe mit der App öffne bitte den Elternbereich in WortWelt. Dort findest du alle Einstellungen für Ton, Sprache und lokale Daten.</p>
       </> : <>
         <h2>Hilfe mit WortWelt</h2>
         <p>WortWelt funktioniert ohne Konto und speichert den Lernfortschritt direkt auf dem Gerät.</p>
-        <p>Für Einstellungen zu Ton, Sprachübung, Kontrast und lokalem Fortschritt öffne in der App den Bereich „Für Eltern”.</p>
+        <p>Für Einstellungen zu Ton, Kontrast und lokalem Fortschritt öffne in der App den Bereich „Für Eltern”.</p>
         <p>Datenschutzinformationen findest du auf der <a href="/privacy">Datenschutzseite</a>.</p>
       </>}
       <a className="primary public-info-link" href="/">Zur WortWelt-App</a>
@@ -237,11 +234,10 @@ export function WortWeltApp() {
 
   if (screen === 'quiz') return <div className={`wortwelt-app single-screen ${appearance}`}><Header title="Wort-Quiz" stars={progress.stars} onBack={() => setScreen('home')} /><main className="quiz"><div className="quiz-emoji">{selected.words[0].emoji}</div><h2>Was siehst du?</h2><button className="audio-button" onClick={() => audio(`words/${selected.words[0].word}`)}>🔊 Wort hören</button><div className="quiz-choices">{choices.map((word) => <button key={word.word} aria-label={word.word} onClick={() => { if (word.word === selected.words[0].word) { award('game', `quiz-${word.word}`); setSelected(germanLetters[(germanLetters.indexOf(selected) + 1) % germanLetters.length]); } else { setMessage('Schau noch einmal genau hin.'); audio('feedback/try-again'); } }}>{word.word[0].toLocaleUpperCase('de-DE')}</button>)}</div><p role="status">{message}</p></main></div>;
 
-  if (screen === 'adventure') return <div className={`wortwelt-app ${appearance}`}><Header title="WortWelt-Abenteuer" stars={progress.stars} onBack={() => setScreen('home')} /><main className="adventure-map"><section className="adventure-summary"><div><small>DEINE ENTDECKERREISE</small><h2>Acht Lerninseln</h2><p>Wähle einen Ort und sammle Sterne.</p></div><span>🗺️</span></section><div className="menu-grid">{[{ screen: 'games' as Screen, icon: '🧠', title: 'Spieleinsel', text: 'Hören, merken, bauen' }, { screen: 'count' as Screen, icon: '🔢', title: 'Zahlenberg', text: 'Bis 100 zählen' }, { screen: 'read' as Screen, icon: '📖', title: 'Lesewald', text: 'Sätze und Geschichten' }, { screen: 'creative' as Screen, icon: '✨', title: 'Ideenwerkstatt', text: 'Eine eigene Geschichte' }, { screen: 'voice' as Screen, icon: '🎙️', title: 'Sprechwerkstatt', text: 'Lokal aufnehmen und hören' }, { screen: 'family' as Screen, icon: '👨‍👩‍👧', title: 'Familien-Missionen', text: 'Gemeinsam ohne Bildschirm' }, { screen: 'logic' as Screen, icon: '🧩', title: 'Denk-Labor', text: 'Muster und Rechnen' }, { screen: 'culture' as Screen, icon: '🏰', title: 'Entdeckerland', text: 'Deutsch im Alltag' }].map((world) => <button className="menu-card menu-adventure" key={world.title} onClick={() => setScreen(world.screen)}><span className="menu-icon">{world.icon}</span><span><strong>{world.title}</strong><small>{world.text}</small></span><b>›</b></button>)}</div></main></div>;
+  if (screen === 'adventure') return <div className={`wortwelt-app ${appearance}`}><Header title="WortWelt-Abenteuer" stars={progress.stars} onBack={() => setScreen('home')} /><main className="adventure-map"><section className="adventure-summary"><div><small>DEINE ENTDECKERREISE</small><h2>Sieben Lerninseln</h2><p>Wähle einen Ort und sammle Sterne.</p></div><span>🗺️</span></section><div className="menu-grid">{[{ screen: 'games' as Screen, icon: '🧠', title: 'Spieleinsel', text: 'Hören, merken, bauen' }, { screen: 'count' as Screen, icon: '🔢', title: 'Zahlenberg', text: 'Bis 100 zählen' }, { screen: 'read' as Screen, icon: '📖', title: 'Lesewald', text: 'Sätze und Geschichten' }, { screen: 'creative' as Screen, icon: '✨', title: 'Ideenwerkstatt', text: 'Eine eigene Geschichte' }, { screen: 'family' as Screen, icon: '👨‍👩‍👧', title: 'Familien-Missionen', text: 'Gemeinsam ohne Bildschirm' }, { screen: 'logic' as Screen, icon: '🧩', title: 'Denk-Labor', text: 'Muster und Rechnen' }, { screen: 'culture' as Screen, icon: '🏰', title: 'Entdeckerland', text: 'Deutsch im Alltag' }].map((world) => <button className="menu-card menu-adventure" key={world.title} onClick={() => setScreen(world.screen)}><span className="menu-icon">{world.icon}</span><span><strong>{world.title}</strong><small>{world.text}</small></span><b>›</b></button>)}</div></main></div>;
 
   if (screen === 'creative') return <div className={`wortwelt-app creative-screen ${appearance}`}><Header title="Meine Geschichte" stars={progress.stars} onBack={() => setScreen('home')} /><main className="creative-studio"><section className="creative-preview"><div className="creative-cover"><span>📝</span><div><small>DEINE GESCHICHTE</small><h2>{creative.hero} und der {creative.treasure}</h2><p>Eine Geschichte aus deiner WortWelt.</p></div></div><div className="creative-story-pages"><article><strong>Am Anfang</strong><p>Heute geht {creative.hero} in den {creative.place}.</p></article><article><strong>Dann passiert etwas</strong><p>Dort findet {creative.hero} einen leuchtenden {creative.treasure}.</p></article><article><strong>Ein gutes Ende</strong><p>{creative.hero} nimmt den {creative.treasure} mit nach Hause und freut sich.</p></article></div><button className="primary" onClick={() => award('game', 'creative-story')}>⭐ Geschichte speichern</button></section><section className="creative-options"><fieldset><legend>Held oder Heldin</legend><div>{['Fuchs', 'Maus', 'Kind', 'Drache'].map((hero) => <button key={hero} className={creative.hero === hero ? 'active' : ''} onClick={() => setCreative((current) => ({ ...current, hero }))}>{hero}</button>)}</div></fieldset><fieldset><legend>Ort</legend><div>{['Wald', 'Park', 'Meer', 'Mond'].map((place) => <button key={place} className={creative.place === place ? 'active' : ''} onClick={() => setCreative((current) => ({ ...current, place }))}>{place}</button>)}</div></fieldset><fieldset><legend>Fundstück</legend><div>{['Stern', 'Schatz', 'Ball', 'Buch'].map((treasure) => <button key={treasure} className={creative.treasure === treasure ? 'active' : ''} onClick={() => setCreative((current) => ({ ...current, treasure }))}>{treasure}</button>)}</div></fieldset></section></main></div>;
 
-  if (screen === 'voice') return <div className={`wortwelt-app single-screen ${appearance}`}><Header title="Sprechwerkstatt" stars={progress.stars} onBack={() => setScreen('adventure')} /><main className="voice-quest"><section className="owl-coach"><span>🦊</span><div><small>SPRICH MIT MIR</small><h2>Hallo, ich bin ein Fuchs!</h2><p>Höre erst die Aufnahme. Danach kannst du deinen eigenen Satz lokal aufnehmen.</p></div></section><button className="audio-button" onClick={() => audio(`words/${selected.words[0].word}`)}>🔊 {selected.words[0].word} hören</button><VoicePractice enabled={progress.voiceEnabled} phrase={`Hallo, ich bin ein ${selected.words[0].word}.`} onRecorded={() => award('game', 'voice')} /></main></div>;
 
   if (screen === 'family') return <div className={`wortwelt-app single-screen ${appearance}`}><Header title="Familien-Missionen" stars={progress.stars} onBack={() => setScreen('adventure')} /><main className="daily-challenge"><section className="daily-hero"><span>👨‍👩‍👧</span><div><h2>Gemeinsam entdecken</h2><p>Diese Aufgaben funktionieren ohne Internet und ohne Punkte-Druck.</p></div></section>{[{ icon: '🔎', title: 'Buchstaben-Suche', text: 'Finde drei Dinge mit dem Anfangslaut M.' }, { icon: '🥄', title: 'Küchen-Zählen', text: 'Zähle vier Löffel und lege einen dazu.' }, { icon: '🎵', title: 'Reime finden', text: 'Welche Wörter klingen wie Haus?' }, { icon: '🎭', title: 'Familien-Theater', text: 'Spielt eine kurze Geschichte mit drei Szenen.' }].map((mission) => <button className="daily-step" key={mission.title} onClick={() => award('game', `family-${mission.title}`)}><strong>{mission.icon}</strong><span><b>{mission.title}</b><small>{mission.text}</small></span><em>✓</em></button>)}</main></div>;
 

@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -51,5 +51,16 @@ describe('WortWelt PWA i native osnova', () => {
     const audioService = read('src/services/wortweltAudio.ts');
     expect(audioService).not.toContain('speechSynthesis');
     expect(audioService).not.toContain('SpeechSynthesis');
+  });
+
+  it('ne isporučuje mikrofon, snimanje glasa ni govornu vežbu za decu', () => {
+    const app = read('src/WortWeltApp.tsx');
+    expect(app).not.toContain('VoicePractice');
+    expect(app).not.toContain('voiceEnabled');
+    expect(app).not.toContain('Sprechwerkstatt');
+    expect(existsSync(resolve(root, 'src/components/VoicePractice.tsx'))).toBe(false);
+    const privacy = read('static/privacy/index.html');
+    expect(privacy).toContain('fordert keine Mikrofonberechtigung an');
+    expect(privacy).not.toContain('Sprechübung');
   });
 });
