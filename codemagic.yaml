@@ -3,6 +3,9 @@ workflows:
     name: WortWelt iOS App Store package
     max_build_duration: 90
     instance_type: mac_mini_m2
+    integrations:
+      # Existing Codemagic secure integration; this workflow alone consumes it.
+      app_store_connect: Sacuvaj Hranu App Store Connect
     environment:
       ios_signing:
         distribution_type: app_store
@@ -35,3 +38,6 @@ workflows:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      app_store_connect:
+        auth: integration
