@@ -14,4 +14,13 @@ describe('WortWelt Codemagic iOS izdanje', () => {
     expect(config).toContain('auth: integration');
     expect(config).not.toMatch(/(password|secret|token|private[_-]?key)\s*:/i);
   });
+
+  it('deklarise da iOS paket ne koristi neizuzetu sopstvenu enkripciju', () => {
+    const infoPlist = readFileSync('ios/App/App/Info.plist', 'utf8');
+    const project = readFileSync('ios/App/App.xcodeproj/project.pbxproj', 'utf8');
+
+    expect(infoPlist).toContain('<key>ITSAppUsesNonExemptEncryption</key>');
+    expect(infoPlist).toContain('<false/>');
+    expect(project).toContain('CURRENT_PROJECT_VERSION = 2;');
+  });
 });
