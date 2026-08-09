@@ -17,6 +17,16 @@ describe('WortWelt početni tok', () => {
     expect(screen.queryByText('Avion')).not.toBeInTheDocument();
   });
 
+  it('ne ponavlja isto ciljno slovo i reč u svakom delu lekcije', () => {
+    render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: /Buchstaben lernen/i }));
+    fireEvent.click(screen.getByRole('button', { name: 'A a' }));
+
+    expect(screen.getByRole('heading', { name: 'Jetzt bist du dran!' })).toBeVisible();
+    expect(screen.getAllByText('Affe')).toHaveLength(1);
+    expect(screen.getByRole('button', { name: 'Bild auswählen: Affe' })).toBeVisible();
+  });
+
   it('tačan odgovor dodeljuje zvezdicu i prelazi na sledeće slovo', () => {
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /Buchstaben lernen/i }));
