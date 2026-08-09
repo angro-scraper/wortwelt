@@ -12,16 +12,19 @@ describe('WortWelt početni tok', () => {
     fireEvent.click(screen.getByRole('button', { name: 'A a' }));
 
     expect(screen.getByRole('heading', { name: 'Buchstabe A a' })).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Bild auswählen: Affe' })).toBeVisible();
     expect(screen.getByText('Apfel')).toBeVisible();
+    expect(screen.getByRole('button', { name: /Weiter zur Bildaufgabe/i })).toBeVisible();
     expect(screen.queryByText('Avion')).not.toBeInTheDocument();
   });
 
-  it('ne ponavlja isto ciljno slovo i reč u svakom delu lekcije', () => {
+  it('razdvaja upoznavanje reči od zadatka sa slikama da se sadržaj ne duplira', () => {
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /Buchstaben lernen/i }));
     fireEvent.click(screen.getByRole('button', { name: 'A a' }));
 
+    expect(screen.getAllByText('Affe')).toHaveLength(1);
+    expect(screen.queryByRole('button', { name: 'Bild auswählen: Affe' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Weiter zur Bildaufgabe/i }));
     expect(screen.getByRole('heading', { name: 'Jetzt bist du dran!' })).toBeVisible();
     expect(screen.getAllByText('Affe')).toHaveLength(1);
     expect(screen.getByRole('button', { name: 'Bild auswählen: Affe' })).toBeVisible();
@@ -31,6 +34,7 @@ describe('WortWelt početni tok', () => {
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /Buchstaben lernen/i }));
     fireEvent.click(screen.getByRole('button', { name: 'A a' }));
+    fireEvent.click(screen.getByRole('button', { name: /Weiter zur Bildaufgabe/i }));
     fireEvent.click(screen.getByRole('button', { name: 'Bild auswählen: Affe' }));
 
     expect(screen.getByRole('status')).toHaveTextContent('Bravo');
@@ -47,6 +51,7 @@ describe('WortWelt početni tok', () => {
     expect(screen.getByRole('button', { name: /B b.*noch gesperrt/i })).toBeDisabled();
 
     fireEvent.click(screen.getByRole('button', { name: /Jetzt A lernen/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Weiter zur Bildaufgabe/i }));
     fireEvent.click(screen.getByRole('button', { name: 'Bild auswählen: Affe' }));
 
     expect(screen.getByRole('heading', { name: 'Buchstabe B b' })).toBeVisible();
