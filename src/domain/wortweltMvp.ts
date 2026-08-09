@@ -57,6 +57,16 @@ export const READING_STORIES: ReadingStory[] = [
   { id: 'leo-laterne', title: 'Leos Laterne', emoji: '🏮', sentences: ['Leo trägt eine bunte Laterne.', 'Er geht langsam durch die dunkle Straße.', 'Seine Laterne zeigt ihm den Weg.'], question: 'Was zeigt Leo den Weg?', answers: ['seine Laterne', 'sein Ball', 'sein Buch'], correct: 'seine Laterne' }
 ];
 
+/**
+ * Kratke, nežne prerade klasičnih bajki u javnom vlasništvu. Tekst je
+ * prilagođen početnicima i ostaje potpuno u aplikaciji, bez mreže ili naloga.
+ */
+export const FAIRY_TALES: ReadingStory[] = [
+  { id: 'rotkaeppchen', title: 'Rotkäppchen', emoji: '🧺', sentences: ['Rotkäppchen bringt ihrer Großmutter einen Korb mit Essen.', 'Im Wald bleibt sie auf dem Weg und pflückt schöne Blumen.', 'Ein freundlicher Förster achtet darauf, dass alle sicher nach Hause kommen.', 'Bei der Großmutter teilen sie den Kuchen und erzählen vom Wald.'], question: 'Wohin bringt Rotkäppchen den Korb?', answers: ['zur Großmutter', 'zur Schule', 'zum Bahnhof'], correct: 'zur Großmutter' },
+  { id: 'bremer-musikanten', title: 'Die Bremer Stadtmusikanten', emoji: '🎵', sentences: ['Ein Esel, ein Hund, eine Katze und ein Hahn möchten Musik machen.', 'Sie gehen zusammen nach Bremen und helfen einander.', 'Als sie laut singen, finden sie ein warmes Haus für die Nacht.', 'Die vier Freunde bleiben zusammen und machen jeden Tag Musik.'], question: 'Wohin gehen die vier Freunde?', answers: ['nach Bremen', 'ans Meer', 'in einen Zoo'], correct: 'nach Bremen' },
+  { id: 'sterntaler', title: 'Die Sterntaler', emoji: '✨', sentences: ['Ein Kind teilt sein Brot und hilft Menschen, die es braucht.', 'Am Abend schaut es in den dunklen Himmel.', 'Viele helle Sterne fallen wie kleine Taler auf die Wiese.', 'Das Kind freut sich und bleibt freundlich zu allen.'], question: 'Was fällt vom Himmel?', answers: ['helle Sterne', 'rote Äpfel', 'kleine Boote'], correct: 'helle Sterne' }
+];
+
 export function gameChoicesFor(letter: GermanLetter, alphabet: GermanLetter[]): GermanWord[] {
   const index = alphabet.findIndex(({ upper }) => upper === letter.upper);
   const target = letter.words[0];

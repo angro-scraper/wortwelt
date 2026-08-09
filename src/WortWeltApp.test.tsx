@@ -29,6 +29,21 @@ describe('WortWelt početni tok', () => {
     expect(screen.getAllByText(/Als Nächstes: B/)).toHaveLength(2);
   });
 
+  it('vodi dete kroz slova redom i sledeće slovo otključava tek posle uspeha', () => {
+    render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: /Buchstaben lernen/i }));
+
+    expect(screen.getByText('Dein nächster Buchstabe: A')).toBeVisible();
+    expect(screen.getByRole('button', { name: /B b.*noch gesperrt/i })).toBeDisabled();
+
+    fireEvent.click(screen.getByRole('button', { name: /Jetzt A lernen/i }));
+    fireEvent.click(screen.getByRole('button', { name: 'Bild auswählen: Affe' }));
+
+    expect(screen.getByRole('heading', { name: 'Buchstabe B b' })).toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    expect(screen.getByRole('button', { name: 'B b' })).not.toBeDisabled();
+  });
+
   it('pisanje daje jasnu Bravo potvrdu i nastavlja sa sledećim slovom i kada detetu treba pomoć', () => {
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /SchreibenMit dem Finger/i }));
@@ -72,6 +87,19 @@ describe('WortWelt početni tok', () => {
     fireEvent.change(screen.getByLabelText('4 + 3 ='), { target: { value: '7' } });
     fireEvent.click(screen.getByRole('button', { name: /Elternbereich öffnen/i }));
     expect(screen.getByText('Datenschutz zuerst')).toBeVisible();
+  });
+
+  it('ima zasebnu, preglednu biblioteku nemačkih bajki', () => {
+    render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: /Märchenwelt/i }));
+
+    expect(screen.getByRole('heading', { name: 'Märchenwald' })).toBeVisible();
+    expect(screen.getAllByText('Rotkäppchen').length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText(/Märchen zum Lesen und Vorlesen/i)).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: /Die Bremer Stadtmusikanten/i }));
+    expect(screen.getByRole('heading', { name: 'Die Bremer Stadtmusikanten' })).toBeVisible();
+    expect(screen.getByText(/Sie gehen zusammen nach Bremen/i)).toBeVisible();
   });
 
   it('otvara nemačke ekvivalente za dnevni izazov, bojanku, kviz i kreativnu priču', () => {

@@ -133,6 +133,14 @@ body {
 .settings-fab { position: fixed; right: max(22px, calc((100vw - 800px)/2 + 22px)); bottom: 24px; width: 54px; height: 54px; border: 0; border-radius: 20px; background: #17213b; color: white; box-shadow: var(--shadow); font-size: 1.4rem; }
 
 .letter-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 11px; padding: 10px 0 24px; }
+.alphabet-path { padding-bottom: 22px; }
+.next-letter-card, .story-library-intro { display: grid; grid-template-columns: auto 1fr; gap: 13px; align-items: center; margin: 12px 0; padding: 18px; border-radius: 26px; background: linear-gradient(135deg, #e8f2ff, #f7efff); box-shadow: var(--shadow); }
+.next-letter-card > span, .story-library-intro > span { font-size: 3rem; }
+.next-letter-card small, .story-library-intro small { color: #5b4ee8; font-size: .72rem; font-weight: 900; letter-spacing: .09em; }
+.next-letter-card h2, .story-library-intro h2 { margin: 3px 0; font: 900 clamp(1.24rem, 4.5vw, 1.6rem)/1.1 var(--font-family); }
+.next-letter-card p, .story-library-intro p { margin: 0; color: #59657d; font-size: .88rem; font-weight: 700; line-height: 1.35; }
+.next-letter-card .primary, .story-library-intro .secondary { grid-column: 1 / -1; width: 100%; }
+.alphabet-hint { margin: 16px 4px 5px; color: #59657d; font-size: .85rem; font-weight: 800; text-align: center; }
 .letter-button {
   aspect-ratio: 1;
   min-width: 0;
@@ -144,6 +152,9 @@ body {
   box-shadow: inset 0 -4px 0 color-mix(in srgb, var(--letter-color) 22%, transparent);
   position: relative;
 }
+.letter-button.next { box-shadow: inset 0 -4px 0 color-mix(in srgb, var(--letter-color) 22%, transparent), 0 0 0 4px color-mix(in srgb, var(--letter-color) 18%, transparent); }
+.letter-button.locked { color: #aab4c6; background: #f1f4f8; box-shadow: none; filter: grayscale(1); opacity: .72; cursor: not-allowed; }
+.letter-button em { position: absolute; right: 7px; bottom: 6px; font-size: .68rem; font-style: normal; }
 .letter-button > strong, .letter-button > small { display: block; line-height: .85; }
 .letter-button > small { margin-top: 5px; font-size: .48em; opacity: .78; }
 .letter-button span { position: absolute; font-size: .65rem; right: 7px; top: 5px; color: #f59e0b; }
@@ -233,6 +244,28 @@ body {
 .sentence { width: 100%; border: 2px solid #e2e8f0; border-radius: 15px; padding: 10px 14px; background: var(--surface); font: 800 clamp(1rem, 4vw, 1.25rem) var(--font-family); }
 .sentence.active { border-color: var(--purple); background: #eef2ff; color: #3730a3; }
 .reading-question { font-weight: 900; margin: 3px 0; }
+.story-library { display: grid; gap: 13px; padding-bottom: 24px; }
+.story-library-intro { margin-bottom: 0; }
+.story-picker, .fairy-picker { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.story-picker button, .fairy-picker button { min-height: 94px; display: grid; grid-template-columns: auto 1fr; grid-template-rows: 1fr auto; column-gap: 9px; align-items: center; padding: 11px; border: 2px solid #e6e8f4; border-radius: 19px; background: var(--surface); text-align: left; }
+.story-picker button.active, .fairy-picker button.active { border-color: var(--purple); background: #f2efff; box-shadow: 0 7px 20px rgba(91,78,232,.12); }
+.story-picker button > span, .fairy-picker button > span { grid-row: 1 / -1; font-size: 2rem; }
+.story-picker button strong, .fairy-picker button strong { font-size: .88rem; line-height: 1.12; }
+.story-picker button small, .fairy-picker button small { color: #68738c; font-size: .7rem; font-weight: 800; }
+.story-reader { padding: 17px; border: 1px solid #e7e5f5; border-radius: 26px; background: linear-gradient(155deg, #fff, #f7f5ff); box-shadow: var(--shadow); }
+.story-reader-title { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; margin-bottom: 10px; text-align: left; }
+.story-reader-title > span { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 18px; background: #eeeaff; font-size: 2rem; }
+.story-reader-title small { color: #6b7280; font-size: .68rem; font-weight: 900; letter-spacing: .07em; }
+.story-reader-title h2 { margin: 2px 0 0; font: 900 clamp(1.25rem, 5vw, 1.7rem)/1.05 var(--font-family); }
+.story-reader-title > div:last-child { display: flex; gap: 5px; }
+.story-reader-title > div:last-child button { width: 33px; height: 33px; border: 0; border-radius: 11px; background: #e6e7ff; color: var(--purple); font-weight: 900; }
+.story-reader .sentence { margin: 8px 0; text-align: left; }
+.story-answers { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.story-answers button { flex: 1 1 120px; min-height: 46px; border: 0; border-radius: 15px; padding: 8px 10px; background: #e8e9ff; color: #4338ca; font-weight: 900; }
+.fairy-library .story-library-intro { background: linear-gradient(135deg, #e9e4ff, #e3f3ff 55%, #fff4ce); }
+.fairy-picker { grid-template-columns: 1fr; }
+.fairy-picker button { min-height: 78px; }
+.fairy-reader { background: linear-gradient(155deg, #fffdf3, #f6f3ff); }
 .numbers-screen { display: flex; flex-direction: column; gap: 9px; min-height: 0; }
 .number-strip { display: flex; gap: 7px; overflow-x: auto; padding: 3px 2px 7px; scrollbar-width: none; }
 .number-strip button { flex: 0 0 47px; height: 47px; border: 0; border-radius: 15px; background: #eef2ff; color: var(--purple); font-weight: 900; position: relative; }
