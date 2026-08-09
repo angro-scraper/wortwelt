@@ -117,6 +117,20 @@ describe('WortWelt početni tok', () => {
     expect(screen.getByText(/Sie gehen zusammen nach Bremen/i)).toBeVisible();
   });
 
+  it('ima zasebnu policu za detetove lokalno sačuvane priče', () => {
+    render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: /Meine Geschichten/i }));
+
+    expect(screen.getByRole('heading', { name: 'Meine Geschichten' })).toBeVisible();
+    expect(screen.getByText(/Deine eigenen Bücher wohnen hier/i)).toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: /Neue Geschichte erfinden/i }));
+    expect(screen.getByRole('heading', { name: 'Meine Geschichte' })).toBeVisible();
+
+    fireEvent.click(screen.getByRole('button', { name: /Geschichte speichern/i }));
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    expect(screen.getByText(/Fuchs und der Stern/i)).toBeVisible();
+  });
+
   it('otvara nemačke ekvivalente za dnevni izazov, bojanku, kviz i kreativnu priču', () => {
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /Tägliche Herausforderung/i }));
