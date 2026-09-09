@@ -15,8 +15,10 @@ describe('WortWelt Android release signing', () => {
 
   it('targets the currently required Android API level for Play releases', () => {
     const variables = readFileSync('android/variables.gradle', 'utf8');
+    const appGradle = readFileSync('android/app/build.gradle', 'utf8');
 
     expect(variables).toContain('compileSdkVersion = 36');
     expect(variables).toContain('targetSdkVersion = 36');
+    expect(appGradle).toContain('versionCode 3');
   });
 });
