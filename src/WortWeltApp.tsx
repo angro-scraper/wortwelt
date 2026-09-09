@@ -51,8 +51,8 @@ function readProgress(): SavedProgress {
       colorings: value.colorings ?? [],
       largeText: value.largeText ?? false,
       highContrast: value.highContrast ?? false,
-      reducedMotion: value.reducedMotion ?? false
-      , createdStories: value.createdStories ?? []
+      reducedMotion: value.reducedMotion ?? false,
+      createdStories: value.createdStories ?? []
     };
   } catch {
     return { stars: 0, learned: [], gamesWon: 0, counted: [], storiesRead: [], profiles: ['Kind'], activeProfile: 0, soundEnabled: true, dailyWins: [], colorings: [], largeText: false, highContrast: false, reducedMotion: false, createdStories: [] };

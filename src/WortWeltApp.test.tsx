@@ -186,6 +186,32 @@ describe('WortWelt početni tok', () => {
     expect(screen.getByRole('heading', { name: 'Mein Fortschritt' })).toBeVisible();
   });
 
+  it.each([
+    [/Tägliche Herausforderung/i, 'Tägliche Herausforderung'],
+    [/AbenteuerAcht Lerninseln/i, 'WortWelt-Abenteuer'],
+    [/Meine nächste Lektion/i, 'Meine nächste Lektion'],
+    [/Buchstaben lernenSchritt/i, 'Das Alphabet'],
+    [/SchreibenMit dem Finger/i, 'Schreibe A'],
+    [/Malwelt/i, 'Meine Malwelt'],
+    [/SpieleHören, Memory/i, 'Spiele'],
+    [/QuizWörter/i, 'Wort-Quiz'],
+    [/Zählen bis 100/i, 'Zählen bis 100'],
+    [/Lesen & Geschichten/i, 'Lesen & Geschichten'],
+    [/Märchenwelt/i, 'Märchenwald'],
+    [/Meine Geschichten/i, 'Meine Geschichten'],
+    [/Mein FortschrittSterne/i, 'Mein Fortschritt']
+  ])('otvara početni tok %s', (menuName, heading) => {
+    render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: menuName }));
+    expect(screen.getByRole('heading', { name: heading })).toBeVisible();
+  });
+
+  it('otvara roditeljsku zaštitu iz početnog menija', () => {
+    render(<WortWeltApp />);
+    fireEvent.click(screen.getByRole('button', { name: /Für Eltern/i }));
+    expect(screen.getByText('Nur für Erwachsene')).toBeVisible();
+  });
+
   it('prikazuje javnu privacy stranicu bez mikrofona i prenosa podataka', () => {
     window.history.pushState({}, '', '/privacy');
     render(<WortWeltApp />);

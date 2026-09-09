@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { germanLetters } from './germanLetters';
-import { COUNTING_LESSONS, DAILY_CHALLENGES, GAME_MODES, READING_STORIES, gameChoicesFor } from './wortweltMvp';
+import { COUNTING_LESSONS, DAILY_CHALLENGES, FAIRY_TALES, GAME_MODES, READING_STORIES, gameChoicesFor } from './wortweltMvp';
 
 describe('WortWelt nemački sadržaj', () => {
   it('ima zatvoren tok brojanja od nule do deset', () => {
@@ -14,6 +14,15 @@ describe('WortWelt nemački sadržaj', () => {
     for (const story of READING_STORIES) {
       expect(story.sentences.length).toBeGreaterThanOrEqual(3);
       expect(story.answers).toContain(story.correct);
+    }
+  });
+
+  it('nudi odvojene, nežne bajke sa proverom razumevanja', () => {
+    expect(FAIRY_TALES.length).toBeGreaterThanOrEqual(3);
+    for (const story of FAIRY_TALES) {
+      expect(story.sentences.length).toBeGreaterThanOrEqual(4);
+      expect(story.answers).toContain(story.correct);
+      expect(story.title.length).toBeGreaterThan(4);
     }
   });
 
