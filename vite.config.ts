@@ -6,7 +6,7 @@ export default defineConfig({
   publicDir: 'static',
   plugins: [react(), VitePWA({
     registerType: 'autoUpdate',
-    includeAssets: ['icons/wortwelt-icon.svg'],
+    includeAssets: ['icons/wortwelt-icon-192.png', 'icons/wortwelt-icon-512.png'],
     manifest: {
       name: 'WortWelt — Deutsch lernen mit Spaß',
       short_name: 'WortWelt',
@@ -16,7 +16,10 @@ export default defineConfig({
       display: 'standalone',
       orientation: 'portrait',
       lang: 'de',
-      icons: [{ src: '/icons/wortwelt-icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }]
+      icons: [
+        { src: '/icons/wortwelt-icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+        { src: '/icons/wortwelt-icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+      ]
     },
     workbox: {
       globPatterns: ['**/*.{js,css,html,svg,json,woff2,mp3}'],

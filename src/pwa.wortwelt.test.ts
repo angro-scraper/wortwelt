@@ -15,6 +15,8 @@ describe('WortWelt PWA i native osnova', () => {
     expect(vite).toContain("display: 'standalone'");
     expect(vite).toContain("lang: 'de'");
     expect(vite).toContain('mp3');
+    expect(vite).toContain('wortwelt-icon-192.png');
+    expect(vite).toContain('wortwelt-icon-512.png');
   });
 
   it('preusmerava javne privacy i support rute na PWA ulaz na Renderu', () => {
@@ -85,6 +87,13 @@ describe('WortWelt PWA i native osnova', () => {
     expect(support).toContain('<title>WortWelt Hilfe &amp; Support</title>');
     expect(support).toContain('ohne Konto');
     expect(support).toContain('Datenschutz');
+  });
+
+  it('isporučuje završenu, prepoznatljivu mobilnu ikonu umesto podrazumevane Capacitor ikone', () => {
+    const iosIcon = resolve(root, 'ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png');
+    const androidIcon = resolve(root, 'android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png');
+    expect(readFileSync(iosIcon).byteLength).toBeGreaterThan(100_000);
+    expect(readFileSync(androidIcon).byteLength).toBeGreaterThan(10_000);
   });
 
 });

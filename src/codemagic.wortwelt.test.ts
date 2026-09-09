@@ -21,6 +21,6 @@ describe('WortWelt Codemagic iOS izdanje', () => {
 
     expect(infoPlist).toContain('<key>ITSAppUsesNonExemptEncryption</key>');
     expect(infoPlist).toContain('<false/>');
-    expect(project).toContain('CURRENT_PROJECT_VERSION = 2;');
+    expect(project).toContain('CURRENT_PROJECT_VERSION = 3;');
   });
 });
