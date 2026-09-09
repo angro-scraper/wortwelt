@@ -86,4 +86,10 @@ describe('WortWelt PWA i native osnova', () => {
     expect(support).toContain('ohne Konto');
     expect(support).toContain('Datenschutz');
   });
+
+  it('deklarira standardni MIME tip za PWA manifest na statičkom hostingu', () => {
+    const renderConfig = read('render.yaml');
+    expect(renderConfig).toContain('path: /manifest.webmanifest');
+    expect(renderConfig).toContain('value: application/manifest+json');
+  });
 });
