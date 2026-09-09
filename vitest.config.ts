@@ -14,7 +14,8 @@ export default defineConfig({
       'src/services/wortweltAudio.test.ts',
       'src/pwa.wortwelt.test.ts',
       'src/components/TracePad.test.ts',
-      'src/codemagic.wortwelt.test.ts'
+      'src/codemagic.wortwelt.test.ts',
+      'src/androidReleaseSigning.test.ts'
     ]
   }
 });

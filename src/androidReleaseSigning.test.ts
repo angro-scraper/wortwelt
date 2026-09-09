@@ -12,4 +12,11 @@ describe('WortWelt Android release signing', () => {
     expect(gitignore).toContain('*.keystore');
     expect(gitignore).toContain('keystore.properties');
   });
+
+  it('targets the currently required Android API level for Play releases', () => {
+    const variables = readFileSync('android/variables.gradle', 'utf8');
+
+    expect(variables).toContain('compileSdkVersion = 36');
+    expect(variables).toContain('targetSdkVersion = 36');
+  });
 });
