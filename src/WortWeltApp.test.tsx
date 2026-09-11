@@ -1,15 +1,31 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { WortWeltApp } from './WortWeltApp';
 
 describe('WortWelt početni tok', () => {
   beforeEach(() => localStorage.clear());
-  afterEach(cleanup);
+  afterEach(() => {
+    vi.useRealTimers();
+    window.history.replaceState({}, '', '/');
+    cleanup();
+  });
+
+  it('prikazuje četiri jasne početne oblasti i nastavak učenja umesto zida sa karticama', () => {
+    render(<WortWeltApp />);
+
+    expect(screen.getByRole('button', { name: /Weiter mit A/i })).toBeVisible();
+    expect(screen.getByRole('button', { name: /Buchstaben lernen/i })).toBeVisible();
+    expect(screen.getByRole('button', { name: /Spiele & Abenteuer/i })).toBeVisible();
+    expect(screen.getByRole('button', { name: /Lesen & Geschichten/i })).toBeVisible();
+    expect(screen.getByRole('button', { name: /Für Eltern/i })).toBeVisible();
+    expect(screen.getByText(/Mehr entdecken/i)).toBeVisible();
+  });
 
   it('otvara nemačku abecedu i nemačko slovo sa tri reči', () => {
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /Buchstaben lernen/i }));
     fireEvent.click(screen.getByRole('button', { name: 'A a' }));
+    fireEvent.click(screen.getByRole('button', { name: /Weiter zu den Wörtern/i }));
 
     expect(screen.getByRole('heading', { name: 'Buchstabe A a' })).toBeVisible();
     expect(screen.getByText('Apfel')).toBeVisible();
@@ -21,6 +37,7 @@ describe('WortWelt početni tok', () => {
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /Buchstaben lernen/i }));
     fireEvent.click(screen.getByRole('button', { name: 'A a' }));
+    fireEvent.click(screen.getByRole('button', { name: /Weiter zu den Wörtern/i }));
 
     expect(screen.getAllByText('Affe')).toHaveLength(1);
     expect(screen.queryByRole('button', { name: 'Bild auswählen: Affe' })).not.toBeInTheDocument();
@@ -31,19 +48,25 @@ describe('WortWelt početni tok', () => {
   });
 
   it('tačan odgovor dodeljuje zvezdicu i prelazi na sledeće slovo', () => {
+    vi.useFakeTimers();
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /Buchstaben lernen/i }));
     fireEvent.click(screen.getByRole('button', { name: 'A a' }));
+    fireEvent.click(screen.getByRole('button', { name: /Weiter zu den Wörtern/i }));
     fireEvent.click(screen.getByRole('button', { name: /Weiter zur Bildaufgabe/i }));
     fireEvent.click(screen.getByRole('button', { name: 'Bild auswählen: Affe' }));
 
     expect(screen.getByRole('status')).toHaveTextContent('Bravo');
     expect(screen.getByText('⭐ 1')).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Buchstabe A a' })).toBeVisible();
+    expect(screen.getAllByText(/Als Nächstes: B/)).toHaveLength(1);
+
+    act(() => vi.advanceTimersByTime(1000));
     expect(screen.getByRole('heading', { name: 'Buchstabe B b' })).toBeVisible();
-    expect(screen.getAllByText(/Als Nächstes: B/)).toHaveLength(2);
   });
 
   it('vodi dete kroz slova redom i sledeće slovo otključava tek posle uspeha', () => {
+    vi.useFakeTimers();
     render(<WortWeltApp />);
     fireEvent.click(screen.getByRole('button', { name: /Buchstaben lernen/i }));
 
@@ -51,16 +74,20 @@ describe('WortWelt početni tok', () => {
     expect(screen.getByRole('button', { name: /B b.*noch gesperrt/i })).toBeDisabled();
 
     fireEvent.click(screen.getByRole('button', { name: /Jetzt A lernen/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Weiter zu den Wörtern/i }));
     fireEvent.click(screen.getByRole('button', { name: /Weiter zur Bildaufgabe/i }));
     fireEvent.click(screen.getByRole('button', { name: 'Bild auswählen: Affe' }));
 
+    act(() => vi.advanceTimersByTime(1000));
     expect(screen.getByRole('heading', { name: 'Buchstabe B b' })).toBeVisible();
     fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
     expect(screen.getByRole('button', { name: 'B b' })).not.toBeDisabled();
   });
 
   it('pisanje daje jasnu Bravo potvrdu i nastavlja sa sledećim slovom i kada detetu treba pomoć', () => {
+    vi.useFakeTimers();
     render(<WortWeltApp />);
+    fireEvent.click(screen.getByText(/Mehr entdecken/i));
     fireEvent.click(screen.getByRole('button', { name: /SchreibenMit dem Finger/i }));
 
     const canvas = screen.getByLabelText('Schreibfläche für den Buchstaben A');
@@ -68,9 +95,23 @@ describe('WortWelt početni tok', () => {
     fireEvent.pointerUp(canvas, { clientX: 30, clientY: 30, pointerId: 1 });
     fireEvent.click(screen.getByRole('button', { name: /Fertig! Weiter mit B/i }));
 
-    expect(screen.getByRole('heading', { name: 'Schreibe B' })).toBeVisible();
-    expect(screen.getAllByRole('status').some((status) => status.textContent?.includes('Bravo! A ist geschafft. Als Nächstes: B.'))).toBe(true);
+    expect(screen.getByRole('heading', { name: 'Schreibe A' })).toBeVisible();
+    expect(screen.getAllByRole('status').some((status) => status.textContent?.includes('Bravo! Als Nächstes: B'))).toBe(true);
     expect(screen.getByText('⭐ 1')).toBeVisible();
+    act(() => vi.advanceTimersByTime(1000));
+    expect(screen.getByRole('heading', { name: 'Schreibe B' })).toBeVisible();
+  });
+
+  it('sinhronizuje glavne ekrane sa pravim URL rutama', () => {
+    window.history.replaceState({}, '', '/lernen/A');
+    render(<WortWeltApp />);
+
+    expect(screen.getByRole('heading', { name: 'Buchstabe A a' })).toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: /Weiter zu den Wörtern/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Weiter zur Bildaufgabe/i }));
+    expect(window.location.pathname).toBe('/lernen/A');
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    expect(window.location.pathname).toBe('/alphabet');
   });
 
   it('zadržava isti tok nagrade i sledećeg koraka za brojanje i bojanku', () => {
@@ -88,7 +129,8 @@ describe('WortWelt početni tok', () => {
 
   it('omogućava nemačko brojanje, priču i roditeljsku zaštitu', () => {
     render(<WortWeltApp />);
-    fireEvent.click(screen.getByRole('button', { name: /Zählen/i }));
+    fireEvent.click(screen.getByText(/Mehr entdecken/i));
+    fireEvent.click(screen.getByRole('button', { name: /Zählen bis 100Mengen/i }));
     expect(screen.getByRole('heading', { name: 'Zählen bis 100' })).toBeVisible();
     expect(screen.getByText(/Wie viele leer/i)).toBeVisible();
 
@@ -109,7 +151,8 @@ describe('WortWelt početni tok', () => {
 
   it('ima zasebnu, preglednu biblioteku nemačkih bajki', () => {
     render(<WortWeltApp />);
-    fireEvent.click(screen.getByRole('button', { name: /Märchenwelt/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Lesen & Geschichten/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Märchen$/i }));
 
     expect(screen.getByRole('heading', { name: 'Märchenwald' })).toBeVisible();
     expect(screen.getAllByText('Rotkäppchen').length).toBeGreaterThanOrEqual(2);
@@ -191,7 +234,7 @@ describe('WortWelt početni tok', () => {
 
   it.each([
     [/Tägliche Herausforderung/i, 'Tägliche Herausforderung'],
-    [/AbenteuerAcht Lerninseln/i, 'WortWelt-Abenteuer'],
+    [/Spiele & Abenteuer/i, 'WortWelt-Abenteuer'],
     [/Meine nächste Lektion/i, 'Meine nächste Lektion'],
     [/Buchstaben lernenSchritt/i, 'Das Alphabet'],
     [/SchreibenMit dem Finger/i, 'Schreibe A'],
@@ -200,7 +243,6 @@ describe('WortWelt početni tok', () => {
     [/QuizWörter/i, 'Wort-Quiz'],
     [/Zählen bis 100/i, 'Zählen bis 100'],
     [/Lesen & Geschichten/i, 'Lesen & Geschichten'],
-    [/Märchenwelt/i, 'Märchenwald'],
     [/Meine Geschichten/i, 'Meine Geschichten'],
     [/Mein FortschrittSterne/i, 'Mein Fortschritt']
   ])('otvara početni tok %s', (menuName, heading) => {
