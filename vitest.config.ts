@@ -12,6 +12,7 @@ export default defineConfig({
       'src/domain/germanLetters.test.ts',
       'src/domain/wortweltMvp.test.ts',
       'src/services/wortweltAudio.test.ts',
+      'src/services/subscriptions.test.ts',
       'src/pwa.wortwelt.test.ts',
       'src/components/TracePad.test.ts',
       'src/codemagic.wortwelt.test.ts',

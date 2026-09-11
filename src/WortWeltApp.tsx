@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TracePad } from './components/TracePad';
 import { ColoringPad } from './components/ColoringPad';
 import { germanLetters, type GermanLetter, type GermanWord } from './domain/germanLetters';
@@ -12,6 +12,12 @@ import {
   type ReadingStory
 } from './domain/wortweltMvp';
 import { playGermanAudio } from './services/wortweltAudio';
+import {
+  createDefaultSubscriptionGateway,
+  createSubscriptionManager,
+  type PurchaseOffer
+} from './services/subscriptions';
+import { WORTWELT_PREMIUM_PRICE, WORTWELT_PREMIUM_TRIAL_DAYS, isCommerceEnabled } from './config/commerce';
 
 type Screen = 'home' | 'alphabet' | 'lesson' | 'write' | 'games' | 'count' | 'read' | 'fairy' | 'my-stories' | 'parent' | 'progress' | 'daily' | 'coloring' | 'quiz' | 'adventure' | 'creative' | 'family' | 'logic' | 'culture' | 'adaptive';
 type SavedCreativeStory = { id: string; title: string; emoji: string; pages: string[] };
@@ -30,6 +36,7 @@ type SavedProgress = {
   highContrast: boolean;
   reducedMotion: boolean;
   createdStories: SavedCreativeStory[];
+  premiumAccess: boolean;
 };
 
 const progressKey = 'wortwelt-progress-v2';
@@ -52,10 +59,11 @@ function readProgress(): SavedProgress {
       largeText: value.largeText ?? false,
       highContrast: value.highContrast ?? false,
       reducedMotion: value.reducedMotion ?? false,
-      createdStories: value.createdStories ?? []
+      createdStories: value.createdStories ?? [],
+      premiumAccess: value.premiumAccess ?? false
     };
   } catch {
-    return { stars: 0, learned: [], gamesWon: 0, counted: [], storiesRead: [], profiles: ['Kind'], activeProfile: 0, soundEnabled: true, dailyWins: [], colorings: [], largeText: false, highContrast: false, reducedMotion: false, createdStories: [] };
+    return { stars: 0, learned: [], gamesWon: 0, counted: [], storiesRead: [], profiles: ['Kind'], activeProfile: 0, soundEnabled: true, dailyWins: [], colorings: [], largeText: false, highContrast: false, reducedMotion: false, createdStories: [], premiumAccess: false };
   }
 }
 
@@ -91,12 +99,41 @@ function ParentGate({ onOpen, onBack }: { onOpen: () => void; onBack: () => void
   </div>;
 }
 
-function ParentScreen({ progress, update, onBack }: { progress: SavedProgress; update: (next: (current: SavedProgress) => SavedProgress) => void; onBack: () => void }) {
+function ParentScreen({ progress, update, onBack, onPremiumChange }: { progress: SavedProgress; update: (next: (current: SavedProgress) => SavedProgress) => void; onBack: () => void; onPremiumChange: (active: boolean) => void }) {
   const activeName = progress.profiles[progress.activeProfile] ?? progress.profiles[0];
+  const commerceEnabled = isCommerceEnabled();
+  const [offer, setOffer] = useState<PurchaseOffer>({ available: false, owned: progress.premiumAccess });
+  const [purchaseBusy, setPurchaseBusy] = useState(false);
+  const [purchaseMessage, setPurchaseMessage] = useState('');
+  const subscription = useMemo(() => createSubscriptionManager(createDefaultSubscriptionGateway(), onPremiumChange), [onPremiumChange]);
+  useEffect(() => {
+    if (!commerceEnabled) return;
+    let active = true;
+    setPurchaseBusy(true);
+    void subscription.initialize().then((next) => {
+      if (!active) return;
+      setOffer(next);
+      setPurchaseMessage(next.reason ?? 'Premium-Angebot ist bereit.');
+    }).catch(() => active && setPurchaseMessage('Die Premium-Angebote können gerade nicht geladen werden.')).finally(() => active && setPurchaseBusy(false));
+    return () => { active = false; };
+  }, [commerceEnabled, subscription]);
+  const buyPremium = async () => {
+    setPurchaseBusy(true);
+    const result = await subscription.purchase();
+    setPurchaseMessage(result.state === 'verified' ? 'WortWelt Premium ist aktiv.' : result.message ?? 'Die Kaufanfrage wurde nicht abgeschlossen.');
+    setPurchaseBusy(false);
+  };
+  const restorePremium = async () => {
+    setPurchaseBusy(true);
+    const result = await subscription.restore();
+    setPurchaseMessage(result.owned ? 'Deine aktive Premium-Mitgliedschaft wurde wiederhergestellt.' : result.message ?? 'Keine aktive Premium-Mitgliedschaft gefunden.');
+    setPurchaseBusy(false);
+  };
   return <div className="wortwelt-app">
     <Header title="Für Eltern" stars={progress.stars} onBack={onBack} />
     <main className="parent-settings">
       <section className="wortwelt-panel"><h2>Datenschutz zuerst</h2><p>Keine Werbung, kein Konto, kein Mikrofon und kein Tracking. Der Lernfortschritt bleibt auf diesem Gerät.</p></section>
+      <section className="wortwelt-panel premium-parent-card"><h2>WortWelt Premium</h2><p><strong>{WORTWELT_PREMIUM_TRIAL_DAYS} Tage kostenlos, danach {WORTWELT_PREMIUM_PRICE} monatlich.</strong></p><p>Die Premium-Mitgliedschaft schaltet alle Märchen, Geschichten und zukünftigen Bibliotheksinhalte frei. Die Zahlung und Kündigung laufen sicher über Apple App Store oder Google Play.</p>{progress.premiumAccess ? <p className="family-owned">✓ WortWelt Premium ist aktiv.</p> : commerceEnabled ? <><button className="primary" disabled={!offer.available || purchaseBusy} onClick={() => void buyPremium()}>{purchaseBusy ? 'Bitte warten…' : 'Premium starten'}</button><button className="secondary" disabled={purchaseBusy} onClick={() => void restorePremium()}>Kauf wiederherstellen</button><small>Auto-erneuerbare Monatsmitgliedschaft. Sie verlängert sich automatisch, bis sie im Apple- oder Google-Konto gekündigt wird.</small></> : <small>Die Kaufoption erscheint ausschließlich in der installierten iOS- oder Android-App.</small>}{purchaseMessage && <p className="purchase-message" role="status">{purchaseMessage}</p>}</section>
       <section className="wortwelt-panel"><h2>Kindprofil</h2><p>Aktiv: <strong>{activeName}</strong></p><div className="profile-chips">{progress.profiles.map((profile, index) => <button key={profile} className={index === progress.activeProfile ? 'active' : ''} onClick={() => update((current) => ({ ...current, activeProfile: index }))}>{profile}</button>)}</div><button className="secondary" onClick={() => update((current) => current.profiles.length >= 3 ? current : ({ ...current, profiles: [...current.profiles, `Kind ${current.profiles.length + 1}`] }))}>+ Profil hinzufügen</button></section>
       <section className="wortwelt-panel"><h2>Ton</h2><label className="setting-toggle"><span>Lokale deutsche Aufnahmen</span><input type="checkbox" checked={progress.soundEnabled} onChange={() => update((current) => ({ ...current, soundEnabled: !current.soundEnabled }))} /></label><small>WortWelt verwendet ausschließlich mitgelieferte Audio-Dateien und keinen System-TTS.</small></section>
       <section className="wortwelt-panel"><h2>Barrierearme Ansicht</h2><label className="setting-toggle"><span>Größere Schrift</span><input type="checkbox" checked={progress.largeText} onChange={() => update((current) => ({ ...current, largeText: !current.largeText }))} /></label><label className="setting-toggle"><span>Hoher Kontrast</span><input type="checkbox" checked={progress.highContrast} onChange={() => update((current) => ({ ...current, highContrast: !current.highContrast }))} /></label><label className="setting-toggle"><span>Weniger Bewegung</span><input type="checkbox" checked={progress.reducedMotion} onChange={() => update((current) => ({ ...current, reducedMotion: !current.reducedMotion }))} /></label></section>
@@ -121,12 +158,15 @@ function PublicInfoPage({ page }: { page: 'privacy' | 'support' }) {
         <p>Lernfortschritt, Kindprofile und gespeicherte Bilder bleiben ausschließlich auf dem verwendeten Gerät. WortWelt überträgt diese Daten nicht an einen Server.</p>
         <h2>Mikrofon</h2>
         <p>WortWelt verwendet kein Mikrofon und fordert keine Mikrofonberechtigung an.</p>
+        <h2>Premium-Mitgliedschaft</h2>
+        <p>Eine optionale WortWelt Premium-Mitgliedschaft wird ausschließlich über Apple App Store oder Google Play bezahlt und verwaltet. WortWelt erhält keine Zahlungsdaten. Die Store-App bestätigt nur lokal, ob Premium aktiv ist.</p>
         <h2>Kontakt</h2>
         <p>Für Hilfe mit der App öffne bitte den Elternbereich in WortWelt. Dort findest du alle Einstellungen für Ton, Sprache und lokale Daten.</p>
       </> : <>
         <h2>Hilfe mit WortWelt</h2>
         <p>WortWelt funktioniert ohne Konto und speichert den Lernfortschritt direkt auf dem Gerät.</p>
         <p>Für Einstellungen zu Ton, Kontrast und lokalem Fortschritt öffne in der App den Bereich „Für Eltern”.</p>
+        <p>Eine aktive Premium-Mitgliedschaft kann im Apple- oder Google-Konto verwaltet oder beendet werden.</p>
         <p>Datenschutzinformationen findest du auf der <a href="/privacy">Datenschutzseite</a>.</p>
       </>}
       <a className="primary public-info-link" href="/">Zur WortWelt-App</a>
@@ -159,6 +199,9 @@ export function WortWeltApp() {
 
   useEffect(() => { localStorage.setItem(progressKey, JSON.stringify(progress)); }, [progress]);
   const update = (next: (current: SavedProgress) => SavedProgress) => setProgress(next);
+  const setPremiumAccess = useCallback((active: boolean) => {
+    setProgress((current) => current.premiumAccess === active ? current : ({ ...current, premiumAccess: active }));
+  }, []);
   const audio = (asset: string) => { void playGermanAudio(asset, progress.soundEnabled); };
   const learnedCount = progress.learned.length;
   const completion = Math.round(((learnedCount + progress.counted.length + progress.storiesRead.length) / (germanLetters.length + COUNTING_LESSONS.length + READING_STORIES.length)) * 100);
@@ -194,6 +237,11 @@ export function WortWeltApp() {
   };
   const choices = useMemo(() => gameChoicesFor(selected, germanLetters), [selected]);
   const nextLetter = (letter: GermanLetter) => germanLetters[(germanLetters.indexOf(letter) + 1) % germanLetters.length];
+  const canOpenLibraryEntry = (index: number) => !isCommerceEnabled() || progress.premiumAccess || index < 3;
+  const requestPremium = () => {
+    setMessage('Diese Geschichte gehört zu WortWelt Premium. Bitte frage deine Eltern.');
+    setScreen('parent');
+  };
   const completeLetter = (letter: GermanLetter, source: 'lesson' | 'writing' | 'coloring') => {
     const next = nextLetter(letter);
     setSelected(next);
@@ -250,10 +298,10 @@ export function WortWeltApp() {
   if (screen === 'read') {
     const storyIndex = READING_STORIES.findIndex((entry) => entry.id === story.id);
     const selectStory = (offset: number) => setStory(READING_STORIES[(storyIndex + offset + READING_STORIES.length) % READING_STORIES.length]);
-    return <div className={`wortwelt-app ${appearance}`}><Header title="Lesen & Geschichten" stars={progress.stars} onBack={() => setScreen('home')} /><main className="story-library"><section className="story-library-intro"><span>📚</span><div><small>DEINE LESEZEIT</small><h2>Kurze Geschichten</h2><p>Wähle eine Geschichte. Lies sie Satz für Satz und beantworte die Frage.</p></div><button className="secondary" onClick={() => setScreen('fairy')}>🌙 Zu den Märchen</button></section><div className="story-picker" aria-label="Geschichten auswählen">{READING_STORIES.map((entry, index) => <button key={entry.id} className={entry.id === story.id ? 'active' : ''} onClick={() => setStory(entry)}><span>{entry.emoji}</span><strong>{entry.title}</strong><small>Geschichte {index + 1}</small></button>)}</div><section className="story-reader"><div className="story-reader-title"><span>{story.emoji}</span><div><small>GESCHICHTE {storyIndex + 1} VON {READING_STORIES.length}</small><h2>{story.title}</h2></div><div><button aria-label="Vorherige Geschichte" onClick={() => selectStory(-1)}>←</button><button aria-label="Nächste Geschichte" onClick={() => selectStory(1)}>→</button></div></div>{story.sentences.map((sentence, index) => <p className="sentence" key={sentence}><button className="sentence-audio" aria-label={`Satz ${index + 1} hören`} onClick={() => audio(`stories/${story.id}-${index + 1}`)}>🔊</button>{sentence}</p>)}<p className="reading-question">{story.question}</p><div className="story-answers">{story.answers.map((answer) => <button key={answer} onClick={() => { if (answer === story.correct) { award('story', story.id); setMessage('Prima, du hast die Geschichte verstanden!'); } else { setMessage('Lies die Geschichte noch einmal.'); audio('feedback/try-again'); } }}>{answer}</button>)}</div><p className="wortwelt-status" role="status">{message}</p></section></main>{celebrate && <div className="celebrate">⭐ Geschichte verstanden!</div>}</div>;
+    return <div className={`wortwelt-app ${appearance}`}><Header title="Lesen & Geschichten" stars={progress.stars} onBack={() => setScreen('home')} /><main className="story-library"><section className="story-library-intro"><span>📚</span><div><small>DEINE LESEZEIT</small><h2>Kurze Geschichten</h2><p>Die ersten drei Geschichten sind kostenlos. Die ganze Bibliothek gehört zu WortWelt Premium.</p></div><button className="secondary" onClick={() => setScreen('fairy')}>🌙 Zu den Märchen</button></section><div className="story-picker" aria-label="Geschichten auswählen">{READING_STORIES.map((entry, index) => <button key={entry.id} className={`${entry.id === story.id ? 'active' : ''} ${canOpenLibraryEntry(index) ? '' : 'locked'}`} onClick={() => canOpenLibraryEntry(index) ? setStory(entry) : requestPremium()}><span>{entry.emoji}</span><strong>{entry.title}</strong><small>{canOpenLibraryEntry(index) ? `Geschichte ${index + 1}` : '🔒 Premium'}</small></button>)}</div><section className="story-reader"><div className="story-reader-title"><span>{story.emoji}</span><div><small>GESCHICHTE {storyIndex + 1} VON {READING_STORIES.length}</small><h2>{story.title}</h2></div><div><button aria-label="Vorherige Geschichte" onClick={() => { const next = (storyIndex - 1 + READING_STORIES.length) % READING_STORIES.length; canOpenLibraryEntry(next) ? selectStory(-1) : requestPremium(); }}>←</button><button aria-label="Nächste Geschichte" onClick={() => { const next = (storyIndex + 1) % READING_STORIES.length; canOpenLibraryEntry(next) ? selectStory(1) : requestPremium(); }}>→</button></div></div>{story.sentences.map((sentence, index) => <p className="sentence" key={sentence}><button className="sentence-audio" aria-label={`Satz ${index + 1} hören`} onClick={() => audio(`stories/${story.id}-${index + 1}`)}>🔊</button>{sentence}</p>)}<p className="reading-question">{story.question}</p><div className="story-answers">{story.answers.map((answer) => <button key={answer} onClick={() => { if (answer === story.correct) { award('story', story.id); setMessage('Prima, du hast die Geschichte verstanden!'); } else { setMessage('Lies die Geschichte noch einmal.'); audio('feedback/try-again'); } }}>{answer}</button>)}</div><p className="wortwelt-status" role="status">{message}</p></section></main>{celebrate && <div className="celebrate">⭐ Geschichte verstanden!</div>}</div>;
   }
 
-  if (screen === 'fairy') return <div className={`wortwelt-app ${appearance}`}><Header title="Märchenwald" stars={progress.stars} onBack={() => setScreen('home')} /><main className="story-library fairy-library"><section className="story-library-intro"><span>🌙</span><div><small>MÄRCHENZEIT</small><h2>Märchen zum Lesen und Vorlesen</h2><p>Sanfte, kurze Fassungen klassischer Märchen für deine WortWelt.</p></div><button className="secondary" onClick={() => setScreen('read')}>📚 Geschichten</button></section><div className="fairy-picker" aria-label="Märchen auswählen">{FAIRY_TALES.map((entry) => <button key={entry.id} className={entry.id === fairyTale.id ? 'active' : ''} onClick={() => setFairyTale(entry)}><span>{entry.emoji}</span><strong>{entry.title}</strong><small>Öffnen und lesen</small></button>)}</div><section className="story-reader fairy-reader"><div className="story-reader-title"><span>{fairyTale.emoji}</span><div><small>KLASSISCHES MÄRCHEN</small><h2>{fairyTale.title}</h2></div></div>{fairyTale.sentences.map((sentence) => <p className="sentence" key={sentence}>{sentence}</p>)}<p className="reading-question">{fairyTale.question}</p><div className="story-answers">{fairyTale.answers.map((answer) => <button key={answer} onClick={() => { if (answer === fairyTale.correct) { award('story', fairyTale.id); setMessage('Wunderbar, du hast das Märchen verstanden!'); } else setMessage('Schau noch einmal in das Märchen.'); }}>{answer}</button>)}</div><p className="wortwelt-status" role="status">{message}</p></section></main>{celebrate && <div className="celebrate">⭐ Märchen verstanden!</div>}</div>;
+  if (screen === 'fairy') return <div className={`wortwelt-app ${appearance}`}><Header title="Märchenwald" stars={progress.stars} onBack={() => setScreen('home')} /><main className="story-library fairy-library"><section className="story-library-intro"><span>🌙</span><div><small>MÄRCHENZEIT</small><h2>Märchen zum Lesen und Vorlesen</h2><p>Die ersten drei Märchen sind kostenlos. Weitere Märchen gehören zu WortWelt Premium.</p></div><button className="secondary" onClick={() => setScreen('read')}>📚 Geschichten</button></section><div className="fairy-picker" aria-label="Märchen auswählen">{FAIRY_TALES.map((entry, index) => <button key={entry.id} className={`${entry.id === fairyTale.id ? 'active' : ''} ${canOpenLibraryEntry(index) ? '' : 'locked'}`} onClick={() => canOpenLibraryEntry(index) ? setFairyTale(entry) : requestPremium()}><span>{entry.emoji}</span><strong>{entry.title}</strong><small>{canOpenLibraryEntry(index) ? 'Öffnen und lesen' : '🔒 Premium'}</small></button>)}</div><section className="story-reader fairy-reader"><div className="story-reader-title"><span>{fairyTale.emoji}</span><div><small>KLASSISCHES MÄRCHEN</small><h2>{fairyTale.title}</h2></div></div>{fairyTale.sentences.map((sentence) => <p className="sentence" key={sentence}>{sentence}</p>)}<p className="reading-question">{fairyTale.question}</p><div className="story-answers">{fairyTale.answers.map((answer) => <button key={answer} onClick={() => { if (answer === fairyTale.correct) { award('story', fairyTale.id); setMessage('Wunderbar, du hast das Märchen verstanden!'); } else setMessage('Schau noch einmal in das Märchen.'); }}>{answer}</button>)}</div><p className="wortwelt-status" role="status">{message}</p></section></main>{celebrate && <div className="celebrate">⭐ Märchen verstanden!</div>}</div>;
 
   if (screen === 'daily') return <div className={`wortwelt-app single-screen ${appearance}`}><Header title="Tägliche Herausforderung" stars={progress.stars} onBack={() => setScreen('home')} /><main className="daily-challenge"><section className="daily-hero"><span>☀️</span><div><h2>Dein kleiner Lernweg</h2><p>Drei abwechslungsreiche Aufgaben für heute.</p></div></section>{DAILY_CHALLENGES.map((challenge, index) => <button key={challenge.id} className={`daily-step ${progress.dailyWins.includes(challenge.id) ? 'done' : ''}`} onClick={() => { update((current) => current.dailyWins.includes(challenge.id) ? current : ({ ...current, dailyWins: [...current.dailyWins, challenge.id], stars: current.stars + 1 })); if (index === 0) openAlphabet(); else setScreen(index === 1 ? 'count' : 'read'); }}><strong>{challenge.emoji}</strong><span><b>{challenge.title}</b><small>{challenge.action}</small></span><em>{progress.dailyWins.includes(challenge.id) ? '✓' : '›'}</em></button>)}</main></div>;
 
@@ -281,7 +329,7 @@ export function WortWeltApp() {
 
   if (screen === 'home') return <div className={`wortwelt-app ${appearance}`}><Header title="Hallo, kleine Entdecker!" stars={progress.stars} /><section className="hero wortwelt-hero"><div><span className="eyebrow">DEUTSCH LERNEN MIT SPASS</span><h2>Entdecke deine<br />neue WortWelt!</h2></div><div className="hero-art" aria-hidden="true">🦊<span>A</span></div></section><main className="menu-grid">{[{ screen: 'daily' as Screen, icon: '☀️', title: 'Tägliche Herausforderung', text: 'Drei kleine Aufgaben', kind: 'daily' }, { screen: 'adventure' as Screen, icon: '🗺️', title: 'Abenteuer', text: 'Acht Lerninseln entdecken', kind: 'adventure' }, { screen: 'adaptive' as Screen, icon: '✨', title: 'Meine nächste Lektion', text: 'Passend zu deinem Lernweg', kind: 'learn' }, { screen: 'alphabet' as Screen, icon: '🔤', title: 'Buchstaben lernen', text: 'Schritt für Schritt lernen', kind: 'learn' }, { screen: 'write' as Screen, icon: '✍️', title: 'Schreiben', text: 'Mit dem Finger nachzeichnen', kind: 'write' }, { screen: 'coloring' as Screen, icon: '🎨', title: 'Malwelt', text: 'Bilder und Buchstaben malen', kind: 'coloring' }, { screen: 'games' as Screen, icon: '🎮', title: 'Spiele', text: 'Hören, Memory, Wörter bauen', kind: 'games' }, { screen: 'quiz' as Screen, icon: '❓', title: 'Quiz', text: 'Wörter und Bilder erkennen', kind: 'quiz' }, { screen: 'count' as Screen, icon: '🔢', title: 'Zählen bis 100', text: 'Mengen und Zahlen entdecken', kind: 'numbers' }, { screen: 'read' as Screen, icon: '📚', title: 'Lesen & Geschichten', text: 'Kurze Geschichten lesen', kind: 'reading' }, { screen: 'fairy' as Screen, icon: '🌙', title: 'Märchenwelt', text: 'Märchen gemeinsam lesen', kind: 'fairy-tales' }, { screen: 'my-stories' as Screen, icon: '📖', title: 'Meine Geschichten', text: 'Eigene Bücher erfinden', kind: 'my-stories' }, { screen: 'progress' as Screen, icon: '⭐', title: 'Mein Fortschritt', text: 'Sterne und Lernweg', kind: 'progress' }, { screen: 'parent' as Screen, icon: '🔒', title: 'Für Eltern', text: 'Profile, Schutz und Ansicht', kind: 'parent' }].map((item) => <button className={`menu-card menu-${item.kind}`} key={item.title} onClick={() => { if (item.screen === 'write') { openWriting(germanLetters[0]); return; } if (item.screen === 'alphabet') { openAlphabet(); return; } setScreen(item.screen); }}><span className="menu-icon">{item.icon}</span><span><strong>{item.title}</strong><small>{item.text}</small></span><b>›</b></button>)}</main></div>;
 
-  if (screen === 'parent') return parentUnlocked ? <ParentScreen progress={progress} update={update} onBack={() => setScreen('home')} /> : <ParentGate onBack={() => setScreen('home')} onOpen={() => setParentUnlocked(true)} />;
+  if (screen === 'parent') return parentUnlocked ? <ParentScreen progress={progress} update={update} onBack={() => setScreen('home')} onPremiumChange={setPremiumAccess} /> : <ParentGate onBack={() => setScreen('home')} onOpen={() => setParentUnlocked(true)} />;
   if (screen === 'progress') return <div className={`wortwelt-app ${appearance}`}><Header title="Mein Fortschritt" stars={progress.stars} onBack={() => setScreen('home')} /><main className="wortwelt-progress"><section><span>⭐</span><strong>{progress.stars}</strong><small>Sterne gesammelt</small></section><section><span>🔤</span><strong>{learnedCount}/30</strong><small>Buchstaben gelernt</small></section><section><span>🔢</span><strong>{progress.counted.length}/101</strong><small>Zahlen gezählt</small></section><section><span>📚</span><strong>{progress.storiesRead.length}/{READING_STORIES.length}</strong><small>Geschichten verstanden</small></section><section><span>🎨</span><strong>{progress.colorings.length}</strong><small>Bilder gespeichert</small></section><section className="progress-wide"><strong>{completion}%</strong><div><i style={{ width: `${completion}%` }} /></div><small>Dein Lernweg</small></section></main></div>;
 
   return <div className={`wortwelt-app ${appearance}`}><Header title="Hallo, kleine Entdecker!" stars={progress.stars} /><section className="hero wortwelt-hero"><div><span className="eyebrow">DEUTSCH LERNEN MIT SPASS</span><h2>Entdecke deine<br />neue WortWelt!</h2></div><div className="hero-art" aria-hidden="true">🦊<span>A</span></div></section><main className="menu-grid"><button className="menu-card menu-daily" onClick={() => setScreen('daily')}><span className="menu-icon">☀️</span><span><strong>Tägliche Herausforderung</strong><small>Drei kleine Aufgaben</small></span><b>›</b></button><button className="menu-card menu-adventure" onClick={() => setScreen('adventure')}><span className="menu-icon">🗺️</span><span><strong>Abenteuer</strong><small>Vier Lerninseln entdecken</small></span><b>›</b></button><button className="menu-card menu-learn" onClick={() => setScreen('alphabet')}><span className="menu-icon">🔤</span><span><strong>Buchstaben lernen</strong><small>Sehen, hören und merken</small></span><b>›</b></button><button className="menu-card menu-write" onClick={() => { setSelected(germanLetters[0]); setScreen('write'); }}><span className="menu-icon">✍️</span><span><strong>Schreiben</strong><small>Mit dem Finger nachzeichnen</small></span><b>›</b></button><button className="menu-card menu-coloring" onClick={() => setScreen('coloring')}><span className="menu-icon">🎨</span><span><strong>Malwelt</strong><small>Bilder und Buchstaben malen</small></span><b>›</b></button><button className="menu-card menu-games" onClick={() => setScreen('games')}><span className="menu-icon">🎮</span><span><strong>Spiele</strong><small>Hören, Memory, Wörter bauen</small></span><b>›</b></button><button className="menu-card menu-quiz" onClick={() => setScreen('quiz')}><span className="menu-icon">❓</span><span><strong>Quiz</strong><small>Wörter und Bilder erkennen</small></span><b>›</b></button><button className="menu-card menu-numbers" onClick={() => setScreen('count')}><span className="menu-icon">🔢</span><span><strong>Zählen bis 100</strong><small>Mengen und Zahlen entdecken</small></span><b>›</b></button><button className="menu-card menu-reading" onClick={() => setScreen('read')}><span className="menu-icon">📚</span><span><strong>Lesen & Geschichten</strong><small>Zwölf Geschichten verstehen</small></span><b>›</b></button><button className="menu-card menu-fairy-tales" onClick={() => setScreen('read')}><span className="menu-icon">🌙</span><span><strong>Geschichtenwelt</strong><small>Vorlesen und Satz für Satz hören</small></span><b>›</b></button><button className="menu-card menu-progress" onClick={() => setScreen('progress')}><span className="menu-icon">⭐</span><span><strong>Mein Fortschritt</strong><small>Sterne und Lernweg</small></span><b>›</b></button><button className="menu-card menu-parent" onClick={() => setScreen('parent')}><span className="menu-icon">🔒</span><span><strong>Für Eltern</strong><small>Profile, Schutz und Ansicht</small></span><b>›</b></button></main></div>;

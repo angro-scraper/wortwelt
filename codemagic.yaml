@@ -13,6 +13,7 @@ workflows:
       vars:
         XCODE_WORKSPACE: ios/App/App.xcworkspace
         XCODE_SCHEME: App
+        VITE_COMMERCE_ENABLED: "true"
     scripts:
       - name: Install locked JavaScript dependencies
         script: npm ci

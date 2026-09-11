@@ -102,6 +102,9 @@ describe('WortWelt početni tok', () => {
     fireEvent.change(screen.getByLabelText('4 + 3 ='), { target: { value: '7' } });
     fireEvent.click(screen.getByRole('button', { name: /Elternbereich öffnen/i }));
     expect(screen.getByText('Datenschutz zuerst')).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'WortWelt Premium' })).toBeVisible();
+    expect(screen.getByText(/7 Tage kostenlos, danach 3,99 €/i)).toBeVisible();
+    expect(screen.getByText(/Apple App Store oder Google Play/i)).toBeVisible();
   });
 
   it('ima zasebnu, preglednu biblioteku nemačkih bajki', () => {

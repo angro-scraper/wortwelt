@@ -9,6 +9,7 @@ describe('WortWelt Codemagic iOS izdanje', () => {
     expect(config).toContain('ios-app-store:');
     expect(config).toContain('distribution_type: app_store');
     expect(config).toContain('bundle_identifier: de.wortwelt.app');
+    expect(config).toContain('VITE_COMMERCE_ENABLED: "true"');
     expect(config).toContain('build/ios/ipa/*.ipa');
     expect(config).toContain('app_store_connect: Sacuvaj Hranu App Store Connect');
     expect(config).toContain('auth: integration');
@@ -21,6 +22,7 @@ describe('WortWelt Codemagic iOS izdanje', () => {
 
     expect(infoPlist).toContain('<key>ITSAppUsesNonExemptEncryption</key>');
     expect(infoPlist).toContain('<false/>');
-    expect(project).toContain('CURRENT_PROJECT_VERSION = 3;');
+    expect(project).toContain('CURRENT_PROJECT_VERSION = 4;');
+    expect(project).toContain('IPHONEOS_DEPLOYMENT_TARGET = 15.0;');
   });
 });

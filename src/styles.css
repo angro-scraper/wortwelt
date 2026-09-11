@@ -842,6 +842,10 @@ body {
   font-size: .8rem;
   font-weight: 800;
 }
+.premium-parent-card { display: grid; gap: 10px; }
+.premium-parent-card p { margin: 0; }
+.premium-parent-card small { color: #69738c; font-weight: 800; }
+.story-picker button.locked, .fairy-picker button.locked { opacity: .76; border: 2px dashed #b7b8d6; }
 .family-section > small { color: #69738c; font-weight: 800; }
 
 .app.large-ui-text { font-size: 112%; }

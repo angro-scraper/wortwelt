@@ -26,6 +26,8 @@
     "src/components/VoicePractice.tsx",
     "src/domain/germanLetters.ts",
     "src/domain/wortweltMvp.ts",
-    "src/services/wortweltAudio.ts"
+    "src/services/wortweltAudio.ts",
+    "src/services/subscriptions.ts",
+    "src/config/commerce.ts"
   ]
 }

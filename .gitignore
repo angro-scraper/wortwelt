@@ -7,6 +7,7 @@ store-listing/
 RELEASE_NOTES_2.1.0.md
 /scripts/*
 !/scripts/generate-german-audio.py
+!/scripts/sync-store-build.ps1
 /src/App*
 /src/nativeShell.test.ts
 /src/premiumTheme.test.ts
@@ -15,7 +16,8 @@ RELEASE_NOTES_2.1.0.md
 /src/storeSafeAssets.ts
 /src/storeSafeBuild.test.ts
 /src/wortweltBranding.test.ts
-/src/config/
+/src/config/*
+!/src/config/commerce.ts
 /src/store/
 /src/data/*
 !/src/data/germanLetters.json
@@ -29,6 +31,8 @@ RELEASE_NOTES_2.1.0.md
 /src/services/*
 !/src/services/wortweltAudio.ts
 !/src/services/wortweltAudio.test.ts
+!/src/services/subscriptions.ts
+!/src/services/subscriptions.test.ts
 android/.gradle/
 android/build/
 android/app/build/

@@ -10,6 +10,7 @@
     "typecheck": "tsc -b",
     "preview": "vite preview --host 0.0.0.0",
     "cap:sync": "npm run build && cap sync",
+    "cap:sync:stores": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\\sync-store-build.ps1",
     "android": "npm run cap:sync && cap open android",
     "ios": "npm run cap:sync && cap open ios",
     "audio:generate": "powershell.exe -NoProfile -Command \"& 'C:\\PomagAI-Codex\\.venv\\Scripts\\python.exe' 'scripts\\generate-german-audio.py'\""
@@ -17,6 +18,7 @@
   "dependencies": {
     "@capacitor/core": "^7.4.4",
     "@fontsource/nunito": "^5.3.0",
+    "cordova-plugin-purchase": "^13.18.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
