@@ -893,6 +893,9 @@ body {
 .premium-parent-card { display: grid; gap: 10px; }
 .premium-parent-card p { margin: 0; }
 .premium-parent-card small { color: #69738c; font-weight: 800; }
+.premium-legal-links { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.premium-legal-links a { display: inline-flex; align-items: center; min-height: 48px; padding: 8px 12px; border-radius: 12px; color: #3342a1; background: #eef0ff; font-weight: 800; text-decoration: underline; overflow-wrap: anywhere; }
+.premium-legal-links a:focus-visible { outline: 3px solid #3342a1; outline-offset: 3px; }
 .story-picker button.locked, .fairy-picker button.locked { opacity: .76; border: 2px dashed #b7b8d6; }
 .family-section > small { color: #69738c; font-weight: 800; }
 

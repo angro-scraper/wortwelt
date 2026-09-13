@@ -3,6 +3,11 @@ WortWelt Premium can be reviewed in the protected Parents area:
 1. On the home screen, tap "Für Eltern".
 2. Enter 7 as the answer to 4 + 3.
 3. Tap "Elternbereich öffnen".
-4. The "WortWelt Premium" card shows the monthly subscription, the 7-day free trial, purchase and restore controls.
+4. The "WortWelt Premium" card shows the one-month auto-renewing subscription, the localized price returned by the App Store, and a free trial only if the store offers one to this account.
+5. BEFORE the "Premium starten" purchase button, tap "Datenschutzerklärung" to open https://wortwelt.onrender.com/privacy in the browser.
+6. Return to WortWelt and tap "Nutzungsbedingungen (EULA)" to open https://www.apple.com/legal/internet-services/itunes/dev/stdeula/ in the browser.
+7. Both legal links remain visible when the offer is loading, unavailable, or already owned. No purchase is required to open them. Purchase and restore controls are in the same card for accounts without an active subscription.
+
+For the next submission, attach a screen recording from the NEW iOS binary showing steps 1–6, including both pages loading successfully and returning to the app. Do not use build 4 as evidence of this correction.
 
 The first three stories and the first three fairy tales remain free. Further library entries require WortWelt Premium. The app has no account, advertising, analytics, tracking or microphone access. Learning progress stays locally on the device. Purchases and subscription management use StoreKit through the App Store.

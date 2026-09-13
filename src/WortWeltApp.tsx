@@ -17,7 +17,7 @@ import {
   createSubscriptionManager,
   type PurchaseOffer
 } from './services/subscriptions';
-import { WORTWELT_PREMIUM_PRICE, WORTWELT_PREMIUM_TRIAL_DAYS, isCommerceEnabled } from './config/commerce';
+import { WORTWELT_PREMIUM_PRICE, WORTWELT_PREMIUM_TRIAL_DAYS, WORTWELT_PRIVACY_URL, WORTWELT_EULA_URL, isCommerceEnabled } from './config/commerce';
 
 type Screen = 'home' | 'alphabet' | 'lesson' | 'write' | 'games' | 'count' | 'read' | 'fairy' | 'my-stories' | 'parent' | 'progress' | 'daily' | 'coloring' | 'quiz' | 'adventure' | 'creative' | 'family' | 'logic' | 'culture' | 'adaptive';
 type SavedCreativeStory = { id: string; title: string; emoji: string; pages: string[] };
@@ -133,6 +133,11 @@ function ParentScreen({ progress, update, onBack, onPremiumChange }: { progress:
   const [offer, setOffer] = useState<PurchaseOffer>({ available: false, owned: progress.premiumAccess });
   const [purchaseBusy, setPurchaseBusy] = useState(false);
   const [purchaseMessage, setPurchaseMessage] = useState('');
+  const priceDisclosure = commerceEnabled
+    ? offer.available && offer.price
+      ? `${offer.trialDays ? `${offer.trialDays} Tage kostenlos, danach ` : ''}${offer.price} pro Monat.`
+      : 'Monatsabonnement. Preis und eine mögliche kostenlose Probe werden aus dem App Store oder Google Play geladen.'
+    : `${WORTWELT_PREMIUM_TRIAL_DAYS} Tage kostenlos, danach ${WORTWELT_PREMIUM_PRICE} monatlich.`;
   const subscription = useMemo(() => createSubscriptionManager(createDefaultSubscriptionGateway(), onPremiumChange), [onPremiumChange]);
   useEffect(() => {
     if (!commerceEnabled) return;
@@ -161,7 +166,21 @@ function ParentScreen({ progress, update, onBack, onPremiumChange }: { progress:
     <Header title="Für Eltern" stars={progress.stars} onBack={onBack} />
     <main className="parent-settings">
       <section className="wortwelt-panel"><h2>Datenschutz zuerst</h2><p>Keine Werbung, kein Konto, kein Mikrofon und kein Tracking. Der Lernfortschritt bleibt auf diesem Gerät.</p></section>
-      <section className="wortwelt-panel premium-parent-card"><h2>WortWelt Premium</h2><p><strong>{WORTWELT_PREMIUM_TRIAL_DAYS} Tage kostenlos, danach {WORTWELT_PREMIUM_PRICE} monatlich.</strong></p><p>Die Premium-Mitgliedschaft schaltet alle Märchen, Geschichten und zukünftigen Bibliotheksinhalte frei. Die Zahlung und Kündigung laufen sicher über Apple App Store oder Google Play.</p>{progress.premiumAccess ? <p className="family-owned">✓ WortWelt Premium ist aktiv.</p> : commerceEnabled ? <><button className="primary" disabled={!offer.available || purchaseBusy} onClick={() => void buyPremium()}>{purchaseBusy ? 'Bitte warten…' : 'Premium starten'}</button><button className="secondary" disabled={purchaseBusy} onClick={() => void restorePremium()}>Kauf wiederherstellen</button><small>Auto-erneuerbare Monatsmitgliedschaft. Sie verlängert sich automatisch, bis sie im Apple- oder Google-Konto gekündigt wird.</small></> : <small>Die Kaufoption erscheint ausschließlich in der installierten iOS- oder Android-App.</small>}{purchaseMessage && <p className="purchase-message" role="status">{purchaseMessage}</p>}</section>
+      <section className="wortwelt-panel premium-parent-card">
+        <h2>WortWelt Premium</h2>
+        <p><strong>{priceDisclosure}</strong></p>
+        <p>Die Premium-Mitgliedschaft schaltet alle Märchen, Geschichten und zukünftigen Bibliotheksinhalte frei. Die Zahlung und Kündigung laufen sicher über Apple App Store oder Google Play.</p>
+        <small>Auto-erneuerbares Abonnement mit einer Laufzeit von einem Monat. Es verlängert sich automatisch, bis es im Apple- oder Google-Konto gekündigt wird. Eine kostenlose Probe gilt nur, wenn sie vom App Store oder Google Play angeboten wird.</small>
+        <nav className="premium-legal-links" aria-label="Rechtliche Informationen zur Mitgliedschaft">
+          <a href={WORTWELT_PRIVACY_URL} target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a>
+          <a href={WORTWELT_EULA_URL} target="_blank" rel="noopener noreferrer">Nutzungsbedingungen (EULA)</a>
+        </nav>
+        {progress.premiumAccess ? <p className="family-owned">✓ WortWelt Premium ist aktiv.</p> : commerceEnabled ? <>
+          <button className="primary" disabled={!offer.available || purchaseBusy} onClick={() => void buyPremium()}>{purchaseBusy ? 'Bitte warten…' : 'Premium starten'}</button>
+          <button className="secondary" disabled={purchaseBusy} onClick={() => void restorePremium()}>Kauf wiederherstellen</button>
+        </> : <small>Die Kaufoption erscheint ausschließlich in der installierten iOS- oder Android-App.</small>}
+        {purchaseMessage && <p className="purchase-message" role="status">{purchaseMessage}</p>}
+      </section>
       <section className="wortwelt-panel"><h2>Kindprofil</h2><p>Aktiv: <strong>{activeName}</strong></p><div className="profile-chips">{progress.profiles.map((profile, index) => <button key={profile} className={index === progress.activeProfile ? 'active' : ''} onClick={() => update((current) => ({ ...current, activeProfile: index }))}>{profile}</button>)}</div><button className="secondary" onClick={() => update((current) => current.profiles.length >= 3 ? current : ({ ...current, profiles: [...current.profiles, `Kind ${current.profiles.length + 1}`] }))}>+ Profil hinzufügen</button></section>
       <section className="wortwelt-panel"><h2>Ton</h2><label className="setting-toggle"><span>Lokale deutsche Aufnahmen</span><input type="checkbox" checked={progress.soundEnabled} onChange={() => update((current) => ({ ...current, soundEnabled: !current.soundEnabled }))} /></label><small>WortWelt verwendet ausschließlich mitgelieferte Audio-Dateien und keinen System-TTS.</small></section>
       <section className="wortwelt-panel"><h2>Barrierearme Ansicht</h2><label className="setting-toggle"><span>Größere Schrift</span><input type="checkbox" checked={progress.largeText} onChange={() => update((current) => ({ ...current, largeText: !current.largeText }))} /></label><label className="setting-toggle"><span>Hoher Kontrast</span><input type="checkbox" checked={progress.highContrast} onChange={() => update((current) => ({ ...current, highContrast: !current.highContrast }))} /></label><label className="setting-toggle"><span>Weniger Bewegung</span><input type="checkbox" checked={progress.reducedMotion} onChange={() => update((current) => ({ ...current, reducedMotion: !current.reducedMotion }))} /></label></section>

@@ -36,4 +36,16 @@ describe('WortWelt prodavnički metapodaci', () => {
     expect(screenshot.readUInt32BE(16)).toBe(1242);
     expect(screenshot.readUInt32BE(20)).toBe(2688);
   });
+
+  it('Apple opis i beleške za pregled navode obe pravne adrese i put do njih', () => {
+    const description = readFileSync('store-listing/apple/de-DE/description.txt', 'utf8');
+    const notes = readFileSync('store-listing/apple/de-DE/review-notes.txt', 'utf8');
+    for (const url of ['https://wortwelt.onrender.com/privacy', 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/']) {
+      expect(description).toContain(url);
+      expect(notes).toContain(url);
+    }
+    expect(notes).toContain('Für Eltern');
+    expect(notes).toContain('BEFORE');
+    expect(notes).toContain('NEW iOS binary');
+  });
 });

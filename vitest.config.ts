@@ -9,6 +9,7 @@ export default defineConfig({
     css: true,
     include: [
       'src/WortWeltApp.test.tsx',
+      'src/subscriptionDisclosure.test.tsx',
       'src/domain/germanLetters.test.ts',
       'src/domain/wortweltMvp.test.ts',
       'src/services/wortweltAudio.test.ts',
