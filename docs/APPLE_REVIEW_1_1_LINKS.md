@@ -39,9 +39,12 @@ Pre ponovne prijave:
 5. Izabrati novi build i ponovo poslati verziju na pregled. Odgovor Apple-u
    mora navesti stvarni novi broj builda i priložen dokaz, ne obećanje.
 
-Važeća repozitorijumska pravila trenutno zabranjuju spoljne write operacije
-izvan GitHub/Render tokova. Za Codemagic/App Store Connect izmene potreban je
-izričit izuzetak od tog pravila. Tajne nisu čitane ni menjane.
+Vlasnik je u nastavku razgovora odobrio traženi Codemagic/App Store Connect
+izuzetak. Tajne nisu čitane ni menjane. U trenutnoj sesiji nije dostupan alat
+za kontrolu prijavljenog browsera niti povezan Codemagic/App Store Connect
+alat. Pripremljen je broj `1.1 (5)` i namenski push okidač za WortWelt granu;
+pokretanje zahteva postojeći ispravan Codemagic webhook. Automatski App Review
+nije uključen pre provere novog paketa i metapodataka.
 
 ## Dokazi
 

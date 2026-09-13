@@ -3,6 +3,14 @@ workflows:
     name: WortWelt iOS App Store package
     max_build_duration: 90
     instance_type: mac_mini_m2
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: codex/autonomous-stabilization/wortwelt-subscription-links-20260913
+          include: true
+          source: true
+      cancel_previous_builds: false
     integrations:
       # Existing Codemagic secure integration; this workflow alone consumes it.
       app_store_connect: Sacuvaj Hranu App Store Connect
@@ -42,3 +50,5 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
+        # Upload only; device evidence and metadata must be checked before review.
+        submit_to_app_store: false

@@ -22,8 +22,18 @@ describe('WortWelt Codemagic iOS izdanje', () => {
 
     expect(infoPlist).toContain('<key>ITSAppUsesNonExemptEncryption</key>');
     expect(infoPlist).toContain('<false/>');
-    expect(project).toContain('CURRENT_PROJECT_VERSION = 4;');
+    expect(project.match(/CURRENT_PROJECT_VERSION = 5;/g)).toHaveLength(2);
+    expect(project).not.toContain('CURRENT_PROJECT_VERSION = 4;');
     expect(project).toContain('MARKETING_VERSION = 1.1;');
     expect(project).toContain('IPHONEOS_DEPLOYMENT_TARGET = 15.0;');
+  });
+
+  it('automatski gradi samo odobrenu WortWelt granu, bez neproverene prijave na pregled', () => {
+    const config = readFileSync('codemagic.yaml', 'utf8');
+    expect(config).toContain('triggering:');
+    expect(config).toContain('- push');
+    expect(config).toContain('pattern: codex/autonomous-stabilization/wortwelt-subscription-links-20260913');
+    expect(config).toContain('submit_to_app_store: false');
+    expect(config).not.toContain('cancel_previous_builds: true');
   });
 });
