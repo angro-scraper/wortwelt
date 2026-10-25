@@ -175,7 +175,17 @@ function ParentScreen({ progress, update, onBack, onPremiumChange }: { progress:
     <main className="parent-settings">
       <section className="wortwelt-panel"><h2>Datenschutz zuerst</h2><p>Keine Werbung, kein Konto, kein Mikrofon und kein Tracking. Der Lernfortschritt bleibt auf diesem Gerät.</p></section>
       <section className="wortwelt-panel premium-parent-card">
-        <h2>WortWelt Premium</h2>
+        <div className="premium-showcase">
+          <div className="premium-showcase-copy">
+            <span className="premium-kicker">DIE GESCHICHTENWELT</span>
+            <h2>WortWelt Premium</h2>
+            <p>Mehr Märchen, mehr Lesestunden und neue Abenteuer zum Entdecken.</p>
+          </div>
+          <img src="/images/wortwelt-fox-stories.png" alt="Der WortWelt-Fuchs liest ein Märchenbuch" />
+          <div className="premium-benefit-chips" aria-label="Premium-Inhalte">
+            <span>📚 Alle Geschichten</span><span>🌙 Märchenwelt</span><span>✨ Neue Inhalte</span>
+          </div>
+        </div>
         <p><strong>{priceDisclosure}</strong></p>
         <p>Die Premium-Mitgliedschaft schaltet alle Märchen, Geschichten und zukünftigen Bibliotheksinhalte frei. Die Zahlung und Kündigung laufen sicher über Apple App Store oder Google Play.</p>
         <small>Auto-erneuerbares Abonnement mit einer Laufzeit von einem Monat. Es verlängert sich automatisch, bis es im Apple- oder Google-Konto gekündigt wird. Eine kostenlose Probe gilt nur, wenn sie vom App Store oder Google Play angeboten wird.</small>
