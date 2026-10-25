@@ -15,7 +15,7 @@ describe('WortWelt početni tok', () => {
 
     expect(screen.getByTestId('learning-dashboard')).toBeVisible();
     expect(screen.getByText('DEINE HEUTIGE ENTDECKUNG')).toBeVisible();
-    expect(screen.getByAltText('WortWelt Fuchs')).toBeVisible();
+    expect(screen.getByAltText('WortWelt Fuchs mit Lernbuch')).toBeVisible();
     expect(screen.getByText('Dein Weg heute')).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Vier Wege zum Deutsch' })).toBeVisible();
     expect(document.querySelectorAll('.journey-start .nav-arrow, .learning-glance-link .nav-arrow, .world-dashboard-grid .nav-arrow, .quick-paths .nav-arrow')).toHaveLength(8);
