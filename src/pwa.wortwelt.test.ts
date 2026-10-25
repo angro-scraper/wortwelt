@@ -9,12 +9,14 @@ const root = resolve(import.meta.dirname, '..');
 const read = (path: string) => readFileSync(resolve(root, path), 'utf8');
 
 describe('WortWelt PWA i native osnova', () => {
-  it('gradi samo nove WortWelt statičke resurse i radi offline', () => {
+  it('gradi samo nove WortWelt statičke resurse bez blokiranja prvog otvaranja zvučnim paketom', () => {
     const vite = read('vite.config.ts');
     expect(vite).toContain("publicDir: 'static'");
     expect(vite).toContain("display: 'standalone'");
     expect(vite).toContain("lang: 'de'");
-    expect(vite).toContain('mp3');
+    expect(vite).not.toContain("globPatterns: ['**/*.{js,css,html,svg,json,woff2,mp3}']");
+    expect(vite).toContain("urlPattern: /\\/audio\\/de\\/.*\\.mp3$/");
+    expect(vite).toContain("handler: 'CacheFirst'");
     expect(vite).toContain('wortwelt-icon-192.png');
     expect(vite).toContain('wortwelt-icon-512.png');
   });

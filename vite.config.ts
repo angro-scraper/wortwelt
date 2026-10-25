@@ -22,7 +22,18 @@ export default defineConfig({
       ]
     },
     workbox: {
-      globPatterns: ['**/*.{js,css,html,svg,json,woff2,mp3}'],
+      // Audio stays in the native package but must not delay the first screen by
+      // precaching all 273 clips. The browser version saves clips after use.
+      globPatterns: ['**/*.{js,css,html,svg,json,woff2}'],
+      runtimeCaching: [{
+        urlPattern: /\/audio\/de\/.*\.mp3$/,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'wortwelt-audio',
+          expiration: { maxEntries: 273, maxAgeSeconds: 60 * 60 * 24 * 180 },
+          cacheableResponse: { statuses: [0, 200] }
+        }
+      }],
       navigateFallback: '/index.html'
     }
   })],
