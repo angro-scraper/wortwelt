@@ -67,9 +67,38 @@ export const FAIRY_TALES: ReadingStory[] = [
   { id: 'sterntaler', title: 'Die Sterntaler', emoji: '✨', sentences: ['Ein Kind teilt sein Brot und hilft Menschen, die es braucht.', 'Am Abend schaut es in den dunklen Himmel.', 'Viele helle Sterne fallen wie kleine Taler auf die Wiese.', 'Das Kind freut sich und bleibt freundlich zu allen.'], question: 'Was fällt vom Himmel?', answers: ['helle Sterne', 'rote Äpfel', 'kleine Boote'], correct: 'helle Sterne' }
 ];
 
+export function answerOptionsWithCorrect<T>(answers: T[], correct: T, sequence: number): T[] {
+  const correctIndex = answers.findIndex((answer) => answer === correct);
+  if (correctIndex < 0 || answers.length < 2) return [...answers];
+  const distractors = answers.filter((_, index) => index !== correctIndex);
+  let seed = (Math.abs(sequence) + 1) * 2654435761;
+  for (let index = distractors.length - 1; index > 0; index -= 1) {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    const swapIndex = seed % (index + 1);
+    [distractors[index], distractors[swapIndex]] = [distractors[swapIndex], distractors[index]];
+  }
+  const position = Math.abs(sequence) % answers.length;
+  distractors.splice(position, 0, correct);
+  return distractors;
+}
+
+export function shuffleForSequence<T>(items: T[], sequence: number): T[] {
+  const shuffled = [...items];
+  let seed = (Math.abs(sequence) + 1) * 2246822519;
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    const swapIndex = seed % (index + 1);
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  if (shuffled.length > 1 && shuffled.every((item, index) => item === items[index])) {
+    shuffled.push(shuffled.shift()!);
+  }
+  return shuffled;
+}
+
 export function gameChoicesFor(letter: GermanLetter, alphabet: GermanLetter[]): GermanWord[] {
   const index = alphabet.findIndex(({ upper }) => upper === letter.upper);
   const target = letter.words[0];
   const other = alphabet.filter(({ upper }) => upper !== letter.upper).flatMap(({ words }) => words);
-  return [other[(index * 5) % other.length], target, other[(index * 11 + 7) % other.length]];
+  return answerOptionsWithCorrect([other[(index * 5) % other.length], target, other[(index * 11 + 7) % other.length]], target, index);
 }
