@@ -10,9 +10,13 @@ describe('WortWelt početni tok', () => {
     cleanup();
   });
 
-  it('prikazuje četiri jasne početne oblasti i nastavak učenja umesto zida sa karticama', () => {
+  it('prikazuje dnevnu misiju, jasan napredak i četiri jasne početne oblasti umesto zida sa karticama', () => {
     render(<WortWeltApp />);
 
+    expect(screen.getByTestId('learning-dashboard')).toBeVisible();
+    expect(screen.getByText('DEINE HEUTIGE ENTDECKUNG')).toBeVisible();
+    expect(screen.getByText('Dein Weg heute')).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Vier Wege zum Deutsch' })).toBeVisible();
     expect(screen.getByRole('button', { name: /Weiter mit A/i })).toBeVisible();
     expect(screen.getByRole('button', { name: /Buchstaben lernen/i })).toBeVisible();
     expect(screen.getByRole('button', { name: /Spiele & Abenteuer/i })).toBeVisible();
