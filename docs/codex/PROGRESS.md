@@ -6,6 +6,10 @@
 - Google Play pretplata `de.wortwelt.app.premium.monthly`: aktiviran je mesečni osnovni plan; u Nemačkoj prikazana cena iznosi 3,99 EUR. Sedmodnevna probna ponuda `trial-7d` bila je aktivna. Cene i dostupnost u drugim regionima zahtevaju zasebnu proveru.
 - Nova Android produkciona verzija 1.3 (versionCode 6) otvorena je kao nacrt; AAB još nije otpremljen u trenutku ovog zapisa. Ne proglašavati izdanje objavljenim bez potvrde Play Console.
 - Verifikacija posle podizanja iOS verzije: `npm test -- --reporter=dot` — 11 fajlova, 67 testova prošlo; `npm run typecheck` — prošlo; `npm run build` — prošlo; `git diff --check` — prošlo (samo LF/CRLF upozorenja).
+- Codemagic build #9 je odbijen pri uploadu jer je koristio iOS 1.1 koji je već odobren. Commit `7175a6c` sa iOS 1.2/build 7 je push-ovan, a novi Codemagic build `6ade1ba14a72334e32e508ae` pokrenut.
+- Play Console je odbio prvi Android AAB jer je minSdk bio 23, dok Play automatska zaštita zahteva 24. Dodat je regresioni test, potvrđeno da prvo pada, podignut `minSdkVersion` na 24 i `android/gradlew.bat bundleRelease` je prošao. Ponovo otpremljeni AAB je validiran kao 6 (1.3), Android 24+, target SDK 36.
+- Android produkciono izdanje `WortWelt 1.3 – Visuelles Abenteuer` je 25. oktobra poslato Google-u na pregled; Play Console prikazuje `Промене на прегледу`. Izdanje još nije javno. Play upozorava da 1.096 ranije podržanih starijih uređaja neće podržavati ovu verziju zbog pomeranja minSdk na 24; dodatno postoji neblokirajuće upozorenje za deobfuscation fajl.
+- Provera Android popravke: `npm test -- --reporter=dot` — 67/67 prošlo; `npm run typecheck` — prošlo; `git diff --check` — prošlo.
 
 ## 2026-10-25 — prepare iOS 1.1 (6) and Android 1.3 (6)
 
