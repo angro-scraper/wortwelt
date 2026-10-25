@@ -10,6 +10,9 @@
 - Play Console je odbio prvi Android AAB jer je minSdk bio 23, dok Play automatska zaštita zahteva 24. Dodat je regresioni test, potvrđeno da prvo pada, podignut `minSdkVersion` na 24 i `android/gradlew.bat bundleRelease` je prošao. Ponovo otpremljeni AAB je validiran kao 6 (1.3), Android 24+, target SDK 36.
 - Android produkciono izdanje `WortWelt 1.3 – Visuelles Abenteuer` je 25. oktobra poslato Google-u na pregled; Play Console prikazuje `Промене на прегледу`. Izdanje još nije javno. Play upozorava da 1.096 ranije podržanih starijih uređaja neće podržavati ovu verziju zbog pomeranja minSdk na 24; dodatno postoji neblokirajuće upozorenje za deobfuscation fajl.
 - Provera Android popravke: `npm test -- --reporter=dot` — 67/67 prošlo; `npm run typecheck` — prošlo; `git diff --check` — prošlo.
+- Codemagic build `6ade1ba14a72334e32e508ae` je završen; publish log potvrđuje `Version: 1.2`, `Version code: 7`, `Min OS version: 15.0` i `UPLOAD SUCCEEDED with no errors` (delivery UUID `763de3e2-ef69-44e9-946b-e755c0277602`).
+- U App Store Connect-u kreirana je verzija 1.2, dodat build 7, upisane nemačke napomene o izmenama i aktuelne review beleške. Apple je potvrdio `1 Item Submitted`; status verzije je `Waiting for Review`, prijava `acb7c695-8c48-4d8c-a8f6-eee936040e07`. Automatska objava posle odobrenja je uključena.
+- Google Play pregled objavljivanja potvrđuje `Промене на прегледу` za produkciono izdanje `WortWelt 1.3 – Visuelles Abenteuer`. Ni iOS 1.2 ni Android 1.3 još nisu javno dostupni u trenutku ove provere; na konačnu odluku čekaju Apple i Google.
 
 ## 2026-10-25 — prepare iOS 1.1 (6) and Android 1.3 (6)
 
