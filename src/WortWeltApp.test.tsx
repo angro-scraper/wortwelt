@@ -17,6 +17,8 @@ describe('WortWelt početni tok', () => {
     expect(screen.getByText('DEINE HEUTIGE ENTDECKUNG')).toBeVisible();
     expect(screen.getByText('Dein Weg heute')).toBeVisible();
     expect(screen.getByRole('heading', { name: 'Vier Wege zum Deutsch' })).toBeVisible();
+    expect(document.querySelectorAll('.journey-start .nav-arrow, .learning-glance-link .nav-arrow, .world-dashboard-grid .nav-arrow, .quick-paths .nav-arrow')).toHaveLength(8);
+    expect(screen.queryByText('›', { exact: true })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Weiter mit A/i })).toBeVisible();
     expect(screen.getByRole('button', { name: /Buchstaben lernen/i })).toBeVisible();
     expect(screen.getByRole('button', { name: /Spiele & Abenteuer/i })).toBeVisible();
