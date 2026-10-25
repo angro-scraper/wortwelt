@@ -19,7 +19,7 @@ describe('WortWelt Android release signing', () => {
 
     expect(variables).toContain('compileSdkVersion = 36');
     expect(variables).toContain('targetSdkVersion = 36');
-    expect(appGradle).toContain('versionCode 5');
-    expect(appGradle).toContain('versionName "1.2"');
+    expect(appGradle).toContain('versionCode 6');
+    expect(appGradle).toContain('versionName "1.3"');
   });
 });
