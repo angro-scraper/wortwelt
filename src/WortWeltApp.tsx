@@ -93,7 +93,7 @@ function readProgress(): SavedProgress {
 
 function Header({ title, stars, onBack }: { title: string; stars: number; onBack?: () => void }) {
   return <header className="screen-header wortwelt-header">
-    {onBack ? <button className="back" onClick={onBack} aria-label="Zurück">←</button> : <div className="wortwelt-mascot" aria-hidden="true"><img src="/icons/wortwelt-icon-192.png" alt="" /></div>}
+    {onBack ? <button className="back" onClick={onBack} aria-label="Zurück"><BackIcon /></button> : <div className="wortwelt-mascot" aria-hidden="true"><img src="/icons/wortwelt-icon-192.png" alt="" /></div>}
     <div><small>WORTWELT</small><h1>{title}</h1></div>
     <span className="star-pill">⭐ {stars}</span>
   </header>;
@@ -105,6 +105,10 @@ function WordIllustration({ word }: { word: GermanWord }) {
 
 function ArrowIcon({ className = 'nav-arrow' }: { className?: string }) {
   return <svg className={className} aria-hidden="true" viewBox="0 0 24 24" fill="none" focusable="false"><path d="M5 12h12M13 7l5 5-5 5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+}
+
+function BackIcon() {
+  return <svg className="back-arrow" aria-hidden="true" viewBox="0 0 24 24" fill="none" focusable="false"><path d="M19 12H5m0 0 6.5-6.5M5 12l6.5 6.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 
 function MenuCard({ icon, title, text, kind, onClick }: { icon: string; title: string; text: string; kind: string; onClick: () => void }) {
