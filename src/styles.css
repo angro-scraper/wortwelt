@@ -1103,10 +1103,10 @@ body {
 .world-dashboard-grid .menu-card > span { position: relative; z-index: 2; }
 .world-dashboard-grid .menu-art { position: absolute; z-index: 1; top: 64px; right: 4px; width: 40%; height: 118px; object-fit: contain; filter: drop-shadow(0 7px 7px rgba(40, 47, 94, .13)); pointer-events: none; }
 .world-dashboard-grid .menu-card.has-art > span:nth-child(2) { grid-column: 1 / -1; grid-row: 1; width: 52%; }
-.world-dashboard-grid .menu-card.has-art .menu-arrow { position: absolute; z-index: 3; right: 14px; bottom: 13px; }
+.world-dashboard-grid .menu-card.has-art .menu-arrow { position: absolute; z-index: 3; left: 14px; right: auto; bottom: 13px; }
 .world-dashboard-grid .menu-card:hover { transform: translateY(-3px); box-shadow: 0 18px 30px rgba(49, 56, 112, .14); }
 .world-dashboard-grid .menu-card::after { content: ''; position: absolute; right: -20px; bottom: -44px; width: 105px; height: 105px; border-radius: 50%; background: currentColor; opacity: .07; }
-.world-dashboard-grid .menu-arrow { position: absolute; right: 14px; bottom: 13px; width: 30px; height: 30px; border-radius: 10px; }
+.world-dashboard-grid .menu-card .menu-arrow { position: absolute; left: 14px; right: auto; bottom: 13px; width: 30px; height: 30px; border-radius: 10px; }
 .world-dashboard-grid .menu-card .menu-icon { grid-row: 1 / span 2; align-self: start; width: 47px; height: 47px; border-radius: 16px; font-size: 1.58rem; }
 .world-dashboard-grid .menu-card > span:nth-child(2) { min-width: 0; }
 .world-dashboard-grid .menu-card strong { color: #1d2757; font-size: .98rem; }
