@@ -1,5 +1,12 @@
 # WortWelt release readiness
 
+## 2026-10-25 — priprema javnog izdanja
+
+- App Store Connect prikazuje iOS 1.1 kao `Ready for Distribution`, pa je sledeća verzija podignuta na 1.2 (build 7). Codemagic izvorni workflow ostaje upload-only; javna prijava se obavlja kroz App Store Connect nakon uspešnog builda.
+- Google Play pretplata `de.wortwelt.app.premium.monthly`: aktiviran je mesečni osnovni plan; u Nemačkoj prikazana cena iznosi 3,99 EUR. Sedmodnevna probna ponuda `trial-7d` bila je aktivna. Cene i dostupnost u drugim regionima zahtevaju zasebnu proveru.
+- Nova Android produkciona verzija 1.3 (versionCode 6) otvorena je kao nacrt; AAB još nije otpremljen u trenutku ovog zapisa. Ne proglašavati izdanje objavljenim bez potvrde Play Console.
+- Verifikacija posle podizanja iOS verzije: `npm test -- --reporter=dot` — 11 fajlova, 67 testova prošlo; `npm run typecheck` — prošlo; `npm run build` — prošlo; `git diff --check` — prošlo (samo LF/CRLF upozorenja).
+
 ## 2026-10-25 — prepare iOS 1.1 (6) and Android 1.3 (6)
 
 - Google Play Console showed production active at WortWelt 1.2, version code 5, in 3 countries/regions. The closed-testing track also had WortWelt 1.2. The new Android bundle therefore uses version code 6 and version name 1.3.
