@@ -269,8 +269,10 @@ export function WortWeltApp() {
   useEffect(() => {
     const route = routeFor(screen, selected);
     if (window.location.pathname !== route) window.history.pushState({ wortwelt: true }, '', route);
-    window.scrollTo({ top: 0, behavior: 'auto' });
-    document.querySelector<HTMLElement>('.adventure-map')?.scrollTo({ top: 0, behavior: 'auto' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    const adventureMap = document.querySelector<HTMLElement>('.adventure-map');
+    if (adventureMap) adventureMap.scrollTop = 0;
   }, [screen, selected]);
   useEffect(() => {
     const onPopState = () => {
