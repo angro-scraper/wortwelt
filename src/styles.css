@@ -747,6 +747,34 @@ body {
 .menu-adventure .menu-icon { background: linear-gradient(135deg, #dbeafe, #fef3c7); }
 .adventure-screen { height: 100%; min-height: 0; display: grid; grid-template-rows: auto 1fr; }
 .adventure-map { min-height: 0; overflow-y: auto; padding: 10px 2px 20px; }
+.adventure-hero { min-height: 205px; position: relative; isolation: isolate; display: grid; grid-template-columns: 1fr minmax(120px, 32%); align-items: center; gap: 8px; overflow: hidden; margin-bottom: 22px; padding: 22px; border-radius: 30px; color: white; background: radial-gradient(circle at 85% 15%, rgba(255,255,255,.22), transparent 32%), linear-gradient(130deg, #3f36c9, #7650e8 68%, #a04de1); box-shadow: 0 18px 40px rgba(79,70,229,.22); }
+.adventure-hero::after { content: ''; position: absolute; z-index: -1; width: 190px; height: 190px; right: 9%; bottom: -135px; border: 22px solid rgba(255,255,255,.1); border-radius: 50%; }
+.adventure-hero-copy { max-width: 540px; }
+.adventure-hero-copy > small, .adventure-map-heading small { color: #fde68a; font-size: .68rem; font-weight: 1000; letter-spacing: .1em; }
+.adventure-hero-copy h2 { margin: 7px 0; font: 950 clamp(1.45rem, 5vw, 2.1rem)/1.08 var(--font-family); }
+.adventure-hero-copy p { max-width: 390px; margin: 0; color: #f0eaff; font-size: .85rem; font-weight: 750; line-height: 1.45; }
+.adventure-hero > img { width: 100%; max-height: 190px; object-fit: contain; filter: drop-shadow(0 12px 15px rgba(31,24,91,.22)); }
+.adventure-journey-count { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 8px 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; background: rgba(255,255,255,.13); font-size: .75rem; }
+.adventure-map-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 4px 14px; }
+.adventure-map-heading small { color: var(--purple); }
+.adventure-map-heading h2 { margin: 3px 0 0; color: var(--ink); font: 950 clamp(1.15rem, 4vw, 1.55rem)/1.15 var(--font-family); }
+.adventure-map-heading > span { font-size: 1.8rem; }
+.adventure-route { position: relative; display: grid; gap: 14px; padding: 4px 0 8px; }
+.adventure-route::before { content: ''; position: absolute; top: 42px; bottom: 42px; left: 50%; width: 0; border-left: 4px dashed #c8c2f7; transform: translateX(-50%); }
+.adventure-stop { width: min(88%, 540px); min-height: 106px; position: relative; display: grid; grid-template-columns: 42px 58px minmax(0, 1fr) 20px; align-items: center; gap: 10px; padding: 12px; border: 2px solid color-mix(in srgb, var(--stop-color) 28%, white); border-radius: 25px; background: linear-gradient(115deg, color-mix(in srgb, var(--stop-color) 7%, white), white 70%); color: var(--ink); box-shadow: 0 10px 24px rgba(40,48,85,.08); text-align: left; transition: transform .18s ease, box-shadow .18s ease; }
+.adventure-stop:hover, .adventure-stop:focus-visible { transform: translateY(-2px) scale(1.01); box-shadow: 0 14px 28px color-mix(in srgb, var(--stop-color) 20%, transparent); }
+.adventure-stop.route-left { justify-self: start; }
+.adventure-stop.route-right { justify-self: end; }
+.adventure-stop-number { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: var(--stop-color); color: white; box-shadow: 0 0 0 5px color-mix(in srgb, var(--stop-color) 15%, white); font-size: .9rem; font-weight: 1000; }
+.adventure-stop-art { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 18px; background: color-mix(in srgb, var(--stop-color) 13%, white); font-size: 1.75rem; }
+.adventure-stop-copy { min-width: 0; display: grid; gap: 3px; }
+.adventure-stop-copy strong { overflow: hidden; color: var(--stop-color); font: 950 1rem/1.15 var(--font-family); text-overflow: ellipsis; white-space: nowrap; }
+.adventure-stop-copy small { color: #59647b; font-size: .7rem; font-weight: 750; line-height: 1.3; }
+.adventure-stop-copy em { display: inline-flex; align-items: center; gap: 4px; margin-top: 3px; color: var(--stop-color); font-size: .65rem; font-style: normal; font-weight: 950; }
+.adventure-stop-copy em svg { width: 13px; height: 13px; }
+.adventure-stop-spark { color: #f4b83f; font-size: 1.35rem; }
+.adventure-stop.discovered { border-color: color-mix(in srgb, var(--stop-color) 60%, white); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--stop-color) 12%, transparent), 0 10px 24px rgba(40,48,85,.08); }
+.adventure-map-note { max-width: 540px; margin: 18px auto 0; padding: 13px 15px; border-radius: 18px; background: #f1f2ff; color: #5d6680; font-size: .72rem; font-weight: 750; line-height: 1.45; text-align: center; }
 .adventure-summary { display: grid; grid-template-columns: 1fr 92px; align-items: center; gap: 14px; margin-bottom: 14px; padding: 18px; border-radius: 28px; background: linear-gradient(135deg, #4238ca, #7c3aed 62%, #ec4899); color: white; box-shadow: 0 18px 40px rgba(79,70,229,.22); }
 .adventure-summary small { color: #fde68a; font-weight: 900; letter-spacing: .08em; }
 .adventure-summary h2 { margin: 4px 0; font: 900 1.65rem var(--font-family); }
